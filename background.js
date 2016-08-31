@@ -1,6 +1,6 @@
 'use strict'
 
-const FontAlias = {
+let FontAlias = {
   '宋体': 'SimSun'
 , '黑体': 'SimHei'
 , '微软雅黑': 'Microsoft YaHei'

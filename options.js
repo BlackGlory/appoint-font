@@ -1,8 +1,8 @@
 'use strict'
 
-const Text = '你们有一个好，全世界跑到什么地方，你们比其他的西方记者啊，跑得还快。但是呢，问来问去的问题啊，都 too simple（太肤浅），啊，sometimes naïve!（有时很幼稚）懂了没有啊？'
+const TEXT = '你们有一个好，全世界跑到什么地方，你们比其他的西方记者啊，跑得还快。但是呢，问来问去的问题啊，都 too simple（太肤浅），啊，sometimes naïve!（有时很幼稚）懂了没有啊？'
 
-const GenericFamily = [
+let GenericFamily = [
   // Serif
   'Serif'
 , 'Times'
@@ -47,20 +47,20 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
     function removeWeight(font) {
       let ctx = document.createElement('canvas').getContext('2d')
         , defaultFont = ctx.font.replace(/\d+px/, `${ pixelSize }px`)
-        , defaultWidth = ctx.measureText(Text).width
+        , defaultWidth = ctx.measureText(TEXT).width
 
       ctx.textBaseline = 'top'
       ctx.width = defaultWidth
       ctx.height = pixelSize
-      ctx.fillText(Text, 0, 0)
+      ctx.fillText(TEXT, 0, 0)
 
       ctx.font = `${ pixelSize }px ${ font }`
-      if (ctx.measureText(Text).width !== defaultWidth) {
+      if (ctx.measureText(TEXT).width !== defaultWidth) {
         return font
       }
 
       ctx.globalCompositeOperation = 'xor'
-      ctx.fillText(Text, 0, 0)
+      ctx.fillText(TEXT, 0, 0)
       let data = ctx.getImageData(0, 0, ctx.width, ctx.height)
       for (let i = data.length; i--;) {
         if (data[i] !== 0) {
@@ -68,8 +68,7 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         }
       }
 
-      font = font.split(' ')
-      font.pop()
+      font = font.split(' ').slice(0, -1)
       if (font.length > 0) {
         return removeWeight(font.join(' '))
       }
