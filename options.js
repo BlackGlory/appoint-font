@@ -105,12 +105,8 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
       fontListMonospace.forEach(font => selectFixedWidth.add(new Option(font, font)))
 
       chrome.storage.local.get(null, ({ config = {} }) => {
-        Object.keys(config).forEach(name => {
-          let ele = document.querySelector(`#${ name }`)
-          if (ele) {
-            ele.value = config[name]
-          }
-        })
+        document.querySelector('#standard').value = config['standard'] || defaultStandard
+        document.querySelector('#fixed_width').value = config['fixed_width'] || defaultFixed
       })
 
       chrome.storage.local.set({

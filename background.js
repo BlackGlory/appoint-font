@@ -30,7 +30,7 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
     return `@font-face { font-family: ${ family }; src: ${ fonts }; }`
   }
 
-  function createStyle({ standard, monospace }, config) {
+  function createStyle({ standard = [], monospace =[] }, config = {}) {
     return standard.reduce((result, font) => {
       let fontType = monospace.indexOf(font) !== -1 ? 'fixed_width' : 'standard'
         , appointFont = config[fontType]
@@ -55,7 +55,7 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
     }, '')
   }
 
-  chrome.storage.local.get(null, ({ fontList, config }) => {
+  chrome.storage.local.get(null, ({ fontList = [], config = {}}) => {
     let style = createStyle(fontList, config)
 
     chrome.storage.onChanged.addListener((changes, areaName) => {
@@ -72,3 +72,5 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
     })
   })
 })
+
+chrome.runtime.onInstalled.addListener(() => chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id }))
