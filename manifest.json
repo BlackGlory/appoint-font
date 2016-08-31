@@ -5,13 +5,18 @@
 , "manifest_version": 2
 , "description": "__MSG_AppDesc__"
 , "default_locale": "en"
+, "icons": {
+    "16": "images/icon-16.png"
+  , "48": "images/icon-48.png"
+  , "128": "images/icon-128.png"
+  }
 , "options_ui": {
     "page": "options.html"
   , "chrome_style": true
   }
 , "background": {
     "scripts": ["background.js"]
-  , "persistent": true
+  , "persistent": false
   }
 , "permissions": [
     "storage"
