@@ -1,0 +1,21 @@
+{
+  "name": "__MSG_AppName__"
+, "version": "1986.10.13"
+, "short_name": "__MSG_AppShortName__"
+, "manifest_version": 2
+, "description": "__MSG_AppDesc__"
+, "default_locale": "en"
+, "options_ui": {
+    "page": "options.html"
+  , "chrome_style": true
+  }
+, "background": {
+    "scripts": ["background.js"]
+  , "persistent": true
+  }
+, "permissions": [
+    "storage"
+  , "fontSettings"
+  , "<all_urls>"
+  ]
+}
