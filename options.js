@@ -1,6 +1,9 @@
 'use strict'
 
-const TEXT = '你们有一个好，全世界跑到什么地方，你们比其他的西方记者啊，跑得还快。但是呢，问来问去的问题啊，都 too simple（太肤浅），啊，sometimes naïve!（有时很幼稚）懂了没有啊？'
+const MIXED_TEXT = '你们有一个好，全世界跑到什么地方，你们比其他的西方记者啊，跑得还快。但是呢，问来问去的问题啊，都 too simple（太肤浅），啊，sometimes naïve!（有时很幼稚）懂了没有啊？'
+const NON_ENGLISH_TEXT = '无可奉告'
+const MONO_TEST_TEXT1 = 'ab'
+const MONO_TEST_TEXT2 = 'il'
 
 let GenericFamily = [
   // Serif
@@ -47,20 +50,20 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
     function removeWeight(font) {
       let ctx = document.createElement('canvas').getContext('2d')
         , defaultFont = ctx.font.replace(/\d+px/, `${ pixelSize }px`)
-        , defaultWidth = ctx.measureText(TEXT).width
+        , defaultWidth = ctx.measureText(MIXED_TEXT).width
 
       ctx.textBaseline = 'top'
       ctx.width = defaultWidth
       ctx.height = pixelSize
-      ctx.fillText(TEXT, 0, 0)
+      ctx.fillText(MIXED_TEXT, 0, 0)
 
       ctx.font = `${ pixelSize }px ${ font }`
-      if (ctx.measureText(TEXT).width !== defaultWidth) {
+      if (ctx.measureText(MIXED_TEXT).width !== defaultWidth) {
         return font
       }
 
       ctx.globalCompositeOperation = 'xor'
-      ctx.fillText(TEXT, 0, 0)
+      ctx.fillText(MIXED_TEXT, 0, 0)
       let data = ctx.getImageData(0, 0, ctx.width, ctx.height)
       for (let i = data.length; i--;) {
         if (data[i] !== 0) {
@@ -83,7 +86,14 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         return ctx.measureText(text).width
       }
 
-      return measureWidth(font, 'ab') === measureWidth(font, 'ij')
+      if (font === defaultFixed) {
+        return true
+      } else if (DefaultFonts.includes(font)) {
+        return false
+      }
+
+      return measureWidth(font, MONO_TEST_TEXT1) === measureWidth(font, MONO_TEST_TEXT2)
+      && measureWidth(font, NON_ENGLISH_TEXT) === measureWidth(defaultSansSerif, NON_ENGLISH_TEXT)
     }
 
     chrome.fontSettings.getFontList(fontList => {
@@ -104,14 +114,24 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
       fontListMonospace.forEach(font => selectFixedWidth.add(new Option(font, font)))
 
       chrome.storage.local.get(null, ({ config = {} }) => {
-        document.querySelector('#standard').value = config['standard'] || defaultStandard
-        document.querySelector('#fixed_width').value = config['fixed_width'] || defaultFixed
+        if (config['standard']) {
+          document.querySelector('#standard').value = config['standard']
+        } else {
+          document.querySelector('#standard').value = fontListStandard.includes(defaultStandard) ? defaultStandard : 'Serif'
+        }
+
+        if (config['fixed_width']) {
+          document.querySelector('#fixed_width').value = config['fixed_width']
+        } else {
+          document.querySelector('#fixed_width').value = fontListMonospace.includes(defaultFixed) ? defaultFixed : 'Monospace'
+        }
       })
 
       chrome.storage.local.set({
         fontList: {
-          'standard': unique(fontListStandard.concat(DefaultFonts))
-        , 'monospace': unique(fontListMonospace.concat(DefaultFonts.filter(isMonospace)))
+          'standard_fonts': fontListStandard
+        , 'monospace_fonts': fontListMonospace
+        , 'default_fonts': DefaultFonts
         }
       })
     })

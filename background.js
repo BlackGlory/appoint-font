@@ -25,30 +25,34 @@ let FontAlias = {
 }
 
 chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
-  function createFontFace(family, ...fonts) {
+  function createFontFaceDirective(family, ...fonts) {
     fonts = fonts.map(font => `local(${ font })`).join(', ')
-    return `@font-face { font-family: ${ family }; src: ${ fonts }; }`
+    return `@font-face { font-family: ${ family }; src: ${ fonts }; }\n`
   }
 
-  function createStyle({ standard = [], monospace =[] }, config = {}) {
-    return standard.reduce((result, font) => {
-      let fontType = monospace.indexOf(font) !== -1 ? 'fixed_width' : 'standard'
-        , appointFont = config[fontType]
+  function createStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = { 'standard': 'Serif', 'fixed_width': 'Monospace'}) {
+    function createFontFaceDirectives(font) {
+      let result = ''
+      if (default_fonts.includes(font)) {
+        result += createFontFaceDirective(font, config['standard'], config['fixed_width'])
+      } else if (monospace_fonts.includes(font)) {
+        result += createFontFaceDirective(font, config['fixed_width'], config['standard'])
+      } else {
+        result += createFontFaceDirective(font, config['standard'])
+      }
+      return result
+    }
 
-      if (font !== appointFont && FontAlias[font] !== appointFont) {
+    return standard_fonts.reduce((result, font) => {
+      let isFixed = monospace_fonts.includes(font)
+        , isDefault = default_fonts.includes(font)
+
+      if (font !== config['standard'] && FontAlias[font] !== config['standard']
+      && font !== config['fixed_width'] && FontAlias[font] !== config['fixed_width']) {
         if (FontAlias[font]) {
-          if (fontType === 'fixed_width') {
-            result +=  createFontFace(FontAlias[font], appointFont, config['standard'], FontAlias[font]) + '\n'
-          } else {
-            result +=  createFontFace(FontAlias[font], appointFont, FontAlias[font]) + '\n'
-          }
+          result += createFontFaceDirectives(FontAlias[font])
         }
-
-        if (fontType === 'fixed_width') {
-          result += createFontFace(font, appointFont, config['standard'], font) + '\n'
-        } else {
-          result += createFontFace(font, appointFont, font) + '\n'
-        }
+        result += createFontFaceDirectives(font)
       }
 
       return result
@@ -73,4 +77,10 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
   })
 })
 
-chrome.runtime.onInstalled.addListener(() => chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id }))
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.storage.local.get(null, ({ config }) => {
+    if (!config || !config['standard'] || !config['fixed_width']) {
+      chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id })
+    }
+  })
+})
