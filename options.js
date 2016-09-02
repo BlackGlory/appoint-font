@@ -108,7 +108,7 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         .filter(x => !!x)
         .concat(DefaultFonts)
         .concat(GenericFamily)
-      )
+      ).sort()
 
       let fontListStandard = fontList
         , fontListMonospace = fontList.filter(isMonospace)

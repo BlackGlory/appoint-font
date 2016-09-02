@@ -1,6 +1,6 @@
 {
   "name": "__MSG_AppName__"
-, "version": "2000.10.27"
+, "version": "2000.10.28"
 , "short_name": "__MSG_AppShortName__"
 , "manifest_version": 2
 , "description": "__MSG_AppDesc__"
@@ -15,9 +15,10 @@
   , "chrome_style": true
   }
 , "background": {
-    "scripts": ["background.js"]
+    "scripts": ["rollbar.js", "background.js"]
   , "persistent": true
   }
+, "content_security_policy":"script-src 'self' https://d37gvrvc0wt4s1.cloudfront.net; object-src 'self'"
 , "permissions": [
     "storage"
   , "fontSettings"
