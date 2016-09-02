@@ -33,6 +33,7 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
   function createStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = { 'standard': 'Serif', 'fixed_width': 'Monospace'}) {
     function createFontFaceDirectives(font) {
       let result = ''
+
       if (default_fonts.includes(font)) {
         result += createFontFaceDirective(font, config['standard'], config['fixed_width'])
       } else if (monospace_fonts.includes(font)) {
@@ -40,6 +41,17 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
       } else {
         result += createFontFaceDirective(font, config['standard'])
       }
+
+      if (FontAlias[font]) {
+        if (default_fonts.includes(font)) {
+          result += createFontFaceDirective(FontAlias[font], config['standard'], config['fixed_width'])
+        } else if (monospace_fonts.includes(font)) {
+          result += createFontFaceDirective(FontAlias[font], config['fixed_width'], config['standard'])
+        } else {
+          result += createFontFaceDirective(FontAlias[font], config['standard'])
+        }
+      }
+
       return result
     }
 
@@ -49,9 +61,6 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
 
       if (font !== config['standard'] && FontAlias[font] !== config['standard']
       && font !== config['fixed_width'] && FontAlias[font] !== config['fixed_width']) {
-        if (FontAlias[font]) {
-          result += createFontFaceDirectives(FontAlias[font])
-        }
         result += createFontFaceDirectives(font)
       }
 
@@ -61,6 +70,8 @@ chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
 
   chrome.storage.local.get(null, ({ fontList = [], config = {}}) => {
     let style = createStyle(fontList, config)
+
+    console.log(style)
 
     chrome.storage.onChanged.addListener((changes, areaName) => {
       chrome.storage.local.get(null, ({ fontList, config }) => style = createStyle(fontList, config))

@@ -7,12 +7,12 @@ const MONO_TEST_TEXT2 = 'il'
 
 let GenericFamily = [
   // Serif
-  'Serif'
+  'serif'
 , 'Times'
 , 'Georgia'
 , 'New Century Schoolbook'
   // Sans-serif
-, 'Sans-serif'
+, 'sans-serif'
 , 'Helvetica'
 , 'Geneva'
 , 'Verdana'
@@ -88,7 +88,7 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
 
       if (font === defaultFixed) {
         return true
-      } else if (DefaultFonts.includes(font)) {
+      } else if (DefaultFonts.includes(font) || ['Sans-serif', 'Serif'].includes(font)) {
         return false
       }
 
@@ -101,10 +101,13 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         , selectFixedWidth = document.querySelector('select#fixed_width')
 
       fontList = unique(
-        [...Array.from(fontList).map(x => x.fontId), ...GenericFamily]
+        Array
+        .from(fontList)
+        .map(x => x.fontId)
         .map(removeWeight)
         .filter(x => !!x)
         .concat(DefaultFonts)
+        .concat(GenericFamily)
       )
 
       let fontListStandard = fontList
@@ -117,7 +120,7 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         if (config['standard']) {
           document.querySelector('#standard').value = config['standard']
         } else {
-          document.querySelector('#standard').value = fontListStandard.includes(defaultStandard) ? defaultStandard : 'Serif'
+          document.querySelector('#standard').value = fontListStandard.includes(defaultStandard) ? defaultStandard : 'serif'
         }
 
         if (config['fixed_width']) {
