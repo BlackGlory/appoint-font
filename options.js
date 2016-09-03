@@ -44,7 +44,7 @@ chrome.fontSettings.getFont({ genericFamily: 'serif' }, ({ fontId: defaultSerif 
 chrome.fontSettings.getFont({ genericFamily: 'fixed' }, ({ fontId: defaultFixed }) =>
 chrome.fontSettings.getFont({ genericFamily: 'cursive' }, ({ fontId: defaultCursive }) =>
 chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFantasy }) =>
-  chrome.fontSettings.getMinimumFontSize(({ pixelSize }) => {
+  chrome.fontSettings.getMinimumFontSize(({ pixelSize = 12 }) => {
     const DefaultFonts = [defaultStandard, defaultSansSerif, defaultSerif, defaultFixed, defaultCursive, defaultFantasy]
 
     function removeWeight(font) {
@@ -64,11 +64,16 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
 
       ctx.globalCompositeOperation = 'xor'
       ctx.fillText(MIXED_TEXT, 0, 0)
-      let data = ctx.getImageData(0, 0, ctx.width, ctx.height)
-      for (let i = data.length; i--;) {
-        if (data[i] !== 0) {
-          return font
+
+      try {
+        let data = ctx.getImageData(0, 0, ctx.width, ctx.height)
+        for (let i = data.length; i--;) {
+          if (data[i] !== 0) {
+            return font
+          }
         }
+      } catch (e) {
+        return null
       }
 
       font = font.split(' ').slice(0, -1)
@@ -117,17 +122,19 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
       fontListMonospace.forEach(font => selectFixedWidth.add(new Option(font, font)))
 
       chrome.storage.local.get(null, ({ config = {} }) => {
-        if (config['standard']) {
-          document.querySelector('#standard').value = config['standard']
-        } else {
-          document.querySelector('#standard').value = fontListStandard.includes(defaultStandard) ? defaultStandard : 'serif'
+        let standard = config['standard']
+        if (!config['standard']) {
+          standard = fontListStandard.includes(defaultStandard) ? defaultStandard : 'serif'
+          chrome.storage.local.set({ config: Object.assign(config, { standard })})
         }
+        document.querySelector('#standard').value = standard
 
-        if (config['fixed_width']) {
-          document.querySelector('#fixed_width').value = config['fixed_width']
-        } else {
-          document.querySelector('#fixed_width').value = fontListMonospace.includes(defaultFixed) ? defaultFixed : 'Monospace'
+        let fixed_width = config['fixed_width']
+        if (!config['fixed_width']) {
+          fixed_width = fontListMonospace.includes(defaultFixed) ? defaultFixed : 'Monospace'
+          chrome.storage.local.set({ config: Object.assign(config, { fixed_width })})
         }
+        document.querySelector('#fixed_width').value = fixed_width
       })
 
       chrome.storage.local.set({
@@ -141,8 +148,8 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
 
     document.querySelectorAll('select').forEach(select => {
       select.addEventListener('change', function() {
-        chrome.storage.local.get(null, storage => {
-          chrome.storage.local.set({ config: Object.assign(storage.config || {}, { [this.id]: this.value })})
+        chrome.storage.local.get(null, ( config = {} ) => {
+          chrome.storage.local.set({ config: Object.assign(config, { [this.id]: this.value })})
         })
       })
     })
