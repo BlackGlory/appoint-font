@@ -75,11 +75,13 @@ chrome.runtime.onInstalled.addListener(() => {
 
         chrome.storage.local.get(null, ({ fontList = [], config = {}}) => {
           let style = createStyle(fontList, config)
-
           console.log(style)
 
           chrome.storage.onChanged.addListener((changes, areaName) => {
-            chrome.storage.local.get(null, ({ fontList, config }) => style = createStyle(fontList, config))
+            chrome.storage.local.get(null, ({ fontList, config }) => {
+              style = createStyle(fontList, config)
+              console.log(style)
+            })
           })
 
           chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {

@@ -125,16 +125,18 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
         let standard = config['standard']
         if (!config['standard']) {
           standard = fontListStandard.includes(defaultStandard) ? defaultStandard : 'serif'
-          chrome.storage.local.set({ config: Object.assign(config, { standard })})
+          Object.assign(config, { standard })
         }
         document.querySelector('#standard').value = standard
 
         let fixed_width = config['fixed_width']
         if (!config['fixed_width']) {
           fixed_width = fontListMonospace.includes(defaultFixed) ? defaultFixed : 'Monospace'
-          chrome.storage.local.set({ config: Object.assign(config, { fixed_width })})
+          Object.assign(config, { fixed_width })
         }
         document.querySelector('#fixed_width').value = fixed_width
+
+        chrome.storage.local.set({ config })
       })
 
       chrome.storage.local.set({
@@ -148,8 +150,9 @@ chrome.fontSettings.getFont({ genericFamily: 'fantasy' }, ({ fontId: defaultFant
 
     document.querySelectorAll('select').forEach(select => {
       select.addEventListener('change', function() {
-        chrome.storage.local.get(null, ( config = {} ) => {
-          chrome.storage.local.set({ config: Object.assign(config, { [this.id]: this.value })})
+        chrome.storage.local.get(null, ({ config = {} }) => {
+          console.log(Object.assign({}, config, { [this.id]: this.value }))
+          chrome.storage.local.set({ config: Object.assign({}, config, { [this.id]: this.value })})
         })
       })
     })
