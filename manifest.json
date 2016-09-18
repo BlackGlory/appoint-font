@@ -1,6 +1,6 @@
 {
   "name": "__MSG_AppName__"
-, "version": "2002.10.24"
+, "version": "2002.10.25"
 , "short_name": "__MSG_AppShortName__"
 , "manifest_version": 2
 , "description": "__MSG_AppDesc__"
@@ -16,7 +16,7 @@
   }
 , "background": {
     "scripts": ["rollbar.js", "background.js"]
-  , "persistent": true
+  , "persistent": false
   }
 , "content_security_policy":"script-src 'self' https://d37gvrvc0wt4s1.cloudfront.net; object-src 'self'"
 , "permissions": [
