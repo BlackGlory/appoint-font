@@ -4,5 +4,4 @@
 , "AppShortName": { "message": "钦定" }
 , "Standard": { "message": "标准字体：" }
 , "FixedWidth": { "message": "等宽字体：" }
-, "ForceMode": { "message": "强力模式：" }
 }

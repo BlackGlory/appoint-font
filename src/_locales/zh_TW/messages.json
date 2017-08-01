@@ -4,5 +4,4 @@
 , "AppShortName": { "message": "欽定" }
 , "Standard": { "message": "標準字體：" }
 , "FixedWidth": { "message": "等寬字體：" }
-, "ForceMode": { "message": "強力模式：" }
 }

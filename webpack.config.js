@@ -7,7 +7,6 @@ module.exports = {
 , entry: {
     'options': './src/options.js'
   , 'background': './src/background.js'
-  , 'force': './src/force.js'
   }
 , output: {
     path: path.join(__dirname, 'dist')

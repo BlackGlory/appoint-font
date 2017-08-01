@@ -4,5 +4,4 @@
 , "AppShortName": { "message": "Appoint" }
 , "Standard": { "message": "Standard: " }
 , "FixedWidth": { "message": "FixedWidth: " }
-, "ForceMode": { "message": "Force Mode: " }
 }

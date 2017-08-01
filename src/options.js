@@ -1,13 +1,7 @@
 'use strict'
 
 import * as promise from 'extra-promise'
-import {
-  getFont
-, getMinimumFontSize
-, getFontList
-, get
-, set
-} from './utils'
+import { getFont, getMinimumFontSize, getFontList, get, set } from './utils'
 
 const GenericFamily = [
   // Serif
@@ -48,17 +42,6 @@ document.querySelectorAll('section').forEach(section => {
       const config = {
         ...((await get(null) || {}).config || {})
       , [this.parentElement.id]: this.value
-      }
-      await set({ config })
-    })
-  }
-
-  const checkbox = section.querySelector('input[type="checkbox"]')
-  if (checkbox) {
-    checkbox.addEventListener('change', async function() {
-      const config = {
-        ...((await get(null) || {}).config || {})
-      , 'force_mode': this.checked
       }
       await set({ config })
     })
@@ -144,15 +127,11 @@ document.querySelectorAll('section').forEach(section => {
   }
 
   function isMonospace(font) {
-    if (isDefaultFixedFont(font)) {
-      return true
-    }
-
-    if (isDefaultFont(font) || isGenericFamily(font)) {
+    if ((isDefaultFont(font) && !isDefaultFixedFont(font)) || isGenericFamily(font)) {
       return false
+    } else {
+      return isFixedWidth(font) && isPureEnglishFont(font)
     }
-
-    return isFixedWidth(font) && isPureEnglishFont(font)
   }
 
   const DefaultFonts = await promise.map(
@@ -174,7 +153,6 @@ document.querySelectorAll('section').forEach(section => {
 
   const selectStandard = document.querySelector('#standard select')
   const selectFixedWidth = document.querySelector('#fixed_width select')
-  const checkboxForceMode = document.querySelector('#force_mode input[type="checkbox"]')
 
   const fontList = unique(
     Array.from(await getFontList())
@@ -208,13 +186,6 @@ document.querySelectorAll('section').forEach(section => {
     config['fixed_width'] = fixedWidth
   }
   selectFixedWidth.value = fixedWidth
-
-  let forceMode = config['force_mode']
-  if (typeof config['force_mode'] === 'undefined') {
-    forceMode = false
-    config['force_mode'] = forceMode
-  }
-  checkboxForceMode.checked = forceMode
 
   set({
     config

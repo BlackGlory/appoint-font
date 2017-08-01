@@ -30,8 +30,7 @@ chrome.runtime.onInstalled.addListener(async () => {
   const storage = await get(null) || {}
   const config = storage.config || {}
   if (typeof config['standard'] === 'undefined'
-  || typeof config['fixed_width'] === 'undefined'
-  || typeof config['force_mode'] === 'undefined') {
+  || typeof config['fixed_width'] === 'undefined') {
     chrome.tabs.create({ 'url': 'chrome://extensions/?options=' + chrome.runtime.id })
   }
 })
@@ -41,12 +40,7 @@ chrome.runtime.onInstalled.addListener(async () => {
     function* generateFallback(font) {
       font = font.split(' ').slice(0, -1)
       while (font.length > 0) {
-        const fallback = font.join(' ')
-        if (standard_fonts.includes(fallback)
-        || monospace_fonts.includes(fallback)
-        || default_fonts.includes(fallback)) {
-          yield fallback
-        }
+        yield font.join(' ')
         font = font.slice(0, -1)
       }
     }
@@ -112,13 +106,6 @@ chrome.runtime.onInstalled.addListener(async () => {
         code: style
       , runAt: 'document_start'
       })
-
-      if (config['force_mode']) {
-        await executeScript(tabId, {
-          file: 'force.js'
-        , runAt: 'document_start'
-        })
-      }
     }
   })
 })()
