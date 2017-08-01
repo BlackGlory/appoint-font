@@ -2,4 +2,7 @@
   "AppName": { "message": "钦定字体" }
 , "AppDesc": { "message": "我讲的意思不是我是钦定它当默认字体。你问我不支……支持不支持，我说支持。我就明确地给你告诉这一点。" }
 , "AppShortName": { "message": "钦定" }
+, "Standard": { "message": "标准字体：" }
+, "FixedWidth": { "message": "等宽字体：" }
+, "ForceMode": { "message": "强力模式：" }
 }

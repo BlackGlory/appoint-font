@@ -2,4 +2,7 @@
   "AppName": { "message": "欽定字體" }
 , "AppDesc": { "message": "我講的意思不是我是欽定它當默認字體。你問我不支……支持不支持，我說支持。我就明確地給你告訴這一點。" }
 , "AppShortName": { "message": "欽定" }
+, "Standard": { "message": "標準字體：" }
+, "FixedWidth": { "message": "等寬字體：" }
+, "ForceMode": { "message": "強力模式：" }
 }

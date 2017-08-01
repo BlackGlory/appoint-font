@@ -2,4 +2,7 @@
   "AppName": { "message": "Appoint Font" }
 , "AppDesc": { "message": "The font is appointed by the dictator." }
 , "AppShortName": { "message": "Appoint" }
+, "Standard": { "message": "Standard: " }
+, "FixedWidth": { "message": "FixedWidth: " }
+, "ForceMode": { "message": "Force Mode: " }
 }
