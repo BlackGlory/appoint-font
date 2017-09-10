@@ -36,15 +36,15 @@ chrome.runtime.onInstalled.addListener(async () => {
 })
 
 ;(async () => {
-  function createStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
-    function* generateFallback(font) {
-      font = font.split(' ').slice(0, -1)
-      while (font.length > 0) {
-        yield font.join(' ')
-        font = font.slice(0, -1)
-      }
+  function* generateFallback(font) {
+    font = font.split(' ').slice(0, -1)
+    while (font.length > 0) {
+      yield font.join(' ')
+      font = font.slice(0, -1)
     }
+  }
 
+  function createFontStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
     function createFontFaceDirective(family, ...fonts) {
       fonts = fonts.map(font => `local(${ font })`).join(', ')
       return `@font-face { font-family: ${ family }; src: ${ fonts }; }\n`
@@ -84,28 +84,54 @@ chrome.runtime.onInstalled.addListener(async () => {
     }, '')
   }
 
+  function createFontString(config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
+    let fonts = [config['standard'], ...generateFallback(config['standard']), config['fixed_width'], ...generateFallback(config['fixed_width'])]
+    return fonts.join(', ')
+  }
+
+  function createBodyStyle(config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
+    return `body { font-family: ${ createFontString(config) }; }`
+  }
+
   let storage = await get(null) || {}
     , fontList = storage.fontList || {}
     , config = storage.config || {}
-    , style = createStyle(fontList, config)
-  console.log(style)
+    , fontStyle = createFontStyle(fontList, config)
+    , fontString = createFontString(config)
+    , bodyStyle = createBodyStyle(config)
+  console.log(fontStyle)
+  console.log(bodyStyle)
 
   chrome.storage.onChanged.addListener(async (changes, areaName) => {
     if (areaName === 'local') {
       storage = await get(null) || {}
       fontList = storage.fontList || {}
       config = storage.config || {}
-      style = createStyle(fontList, config)
-      console.log(style)
+      fontStyle = createFontStyle(fontList, config)
+      fontString = createFontString(config)
+      console.log(fontStyle)
+      console.log(bodyStyle)
     }
   })
 
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     if (changeInfo.status === 'loading') {
-      await insertCSS(tabId, {
-        code: style
-      , runAt: 'document_start'
-      })
+      await Promise.all([
+        // It could be overridden by page style, but efficient.
+        insertCSS(tabId, {
+          code: fontStyle + bodyStyle
+        , runAt: 'document_start'
+        })
+      , // The high priority patch, may be offending the user.
+        executeScript(tabId, {
+          code: `
+            document.addEventListener('DOMContentLoaded', () => {
+              document.body.style.fontFamily = ${ JSON.stringify(fontString) }
+            })
+          `
+        , runAt: 'document_start'
+        })
+      ])
     }
   })
 })()
