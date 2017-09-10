@@ -1,6 +1,6 @@
 'use strict'
 
-import { get, getMinimumFontSize, insertCSS, executeScript, getFontList } from './utils'
+import { get, getMinimumFontSize, insertCSS, executeScript, getFontList, getAllFrames } from './utils'
 
 const FontAlias = {
   '宋体': 'SimSun'
@@ -114,24 +114,37 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   })
 
+  async function inject(tabId, frameId = 0) {
+    return await Promise.all([
+      // It could be overridden by page style, but efficient.
+      insertCSS(tabId, {
+        code: fontStyle + bodyStyle
+      , runAt: 'document_start'
+      , allFrames: true // Cannot work.
+      , frameId
+      , matchAboutBlank: true
+      })
+    , // The high priority patch, may be offending the user.
+      executeScript(tabId, {
+        code: `
+          document.addEventListener('DOMContentLoaded', () => {
+            document.body.style.fontFamily = ${ JSON.stringify(fontString) }
+          })
+        `
+      , runAt: 'document_start'
+      , allFrames: true // Cannot work.
+      , frameId
+      , matchAboutBlank: true
+      })
+    ])
+  }
+
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    if (changeInfo.status === 'loading') {
-      await Promise.all([
-        // It could be overridden by page style, but efficient.
-        insertCSS(tabId, {
-          code: fontStyle + bodyStyle
-        , runAt: 'document_start'
-        })
-      , // The high priority patch, may be offending the user.
-        executeScript(tabId, {
-          code: `
-            document.addEventListener('DOMContentLoaded', () => {
-              document.body.style.fontFamily = ${ JSON.stringify(fontString) }
-            })
-          `
-        , runAt: 'document_start'
-        })
-      ])
+    switch (changeInfo.status) {
+      case 'loading': await inject(tabId)
+      case 'complete':(await getAllFrames({ tabId }))
+        .filter(x => x.frameId !== 0) // Not the top-level frame.
+        .forEach(x => inject(tabId, x.frameId))
     }
   })
 })()
