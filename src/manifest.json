@@ -1,6 +1,6 @@
 {
   "name": "__MSG_AppName__"
-, "version": "2017.9.11"
+, "version": "2017.10.18"
 , "short_name": "__MSG_AppShortName__"
 , "manifest_version": 2
 , "description": "__MSG_AppDesc__"
@@ -16,7 +16,7 @@
   }
 , "background": {
     "scripts": ["background.js"]
-  , "persistent": false
+  , "persistent": true
   }
 , "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAksTn6HBn2JtcleGTxK5xSrDajK2LGi7GY9tzlc1czd5jOzooJqG7hxuXBLlf3kUt3cIyD9W/a7Y5gDp66tQGkJpVYrfmpsy0gWFlW6Gdg8QGiFvIZx9h1UnhQCfR7GQnCRv24B43lKIGb8GsXcuGbE2yhrrsIVwJY3bwr6fuBzX6YlSbC8Subzh2J+1GmNAzrEI2IMvdjAhbYbOk/4AqSsvxq4/sqgxJSrrtO24pellL+SFUmoHa/O8X4VLHC0PzrmpOiJbWLKaGFd3nR33/xCdi/mXjtSRziH9RVdB6+6Nh9lx4wDjy7ST7n5LkqEFYBCZPmo/zEQqd8ozOFdRSCQIDAQAB"
 , "permissions": [

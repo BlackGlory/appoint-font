@@ -142,9 +142,10 @@ chrome.runtime.onInstalled.addListener(async () => {
   chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     switch (changeInfo.status) {
       case 'loading': await inject(tabId)
-      case 'complete': (await getAllFrames({ tabId }))
+      case 'complete': (await getAllFrames({ tabId }) || [])
         .filter(x => x.frameId !== 0) // Not the top-level frame.
         .forEach(x => inject(tabId, x.frameId))
+      default: console.log(new Date(), tabId, changeInfo, tab)
     }
   })
 })()
