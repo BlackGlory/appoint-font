@@ -1,11 +1,12 @@
 {
   "name": "appoint-font",
-  "version": "2017.10.18",
+  "version": "2017.10.18.1",
   "repository": "git@github.com:BlackGlory/appoint-font.git",
   "author": "BlackGlory <woshenmedoubuzhidao@blackglory.me>",
   "license": "MIT",
   "scripts": {
     "build": "webpack"
+  , "dev": "webpack --watch"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",

@@ -44,7 +44,11 @@ chrome.runtime.onInstalled.addListener(async () => {
     }
   }
 
-  function createFontStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
+  function createFontStyle({ standard_fonts = [], monospace_fonts = [], default_fonts = [] }, config = {}) {
+    if (Object.keys(config).length === 0) {
+      config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }
+    }
+
     function createFontFaceDirective(family, ...fonts) {
       fonts = fonts.map(font => `local(${ font })`).join(', ')
       return `@font-face { font-family: ${ family }; src: ${ fonts }; }\n`
@@ -84,21 +88,29 @@ chrome.runtime.onInstalled.addListener(async () => {
     }, '')
   }
 
-  function createFontString(config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
+  function createFontString(config = {}) {
+    if (Object.keys(config).length === 0) {
+      config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }
+    }
+
     let fonts = [config['standard'], ...generateFallback(config['standard']), config['fixed_width'], ...generateFallback(config['fixed_width'])]
     return fonts.join(', ')
   }
 
-  function createBodyStyle(config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }) {
+  function createBodyStyle(config = {}) {
+    if (Object.keys(config).length === 0) {
+      config = { 'standard': 'Serif', 'fixed_width': 'Monospace' }
+    }
+
     return `body { font-family: ${ createFontString(config) }; }`
   }
 
   let storage = await get(null) || {}
-    , fontList = storage.fontList || {}
-    , config = storage.config || {}
-    , fontStyle = createFontStyle(fontList, config)
-    , fontString = createFontString(config)
-    , bodyStyle = createBodyStyle(config)
+  let fontList = storage.fontList || {}
+  let config = storage.config || {}
+  let fontStyle = createFontStyle(fontList, config)
+  let fontString = createFontString(config)
+  let bodyStyle = createBodyStyle(config)
   console.log(fontStyle)
   console.log(bodyStyle)
 
