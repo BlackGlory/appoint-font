@@ -1,6 +1,6 @@
 {
   "name": "__MSG_AppName__"
-, "version": "2017.10.18"
+, "version": "2017.10.18.1"
 , "short_name": "__MSG_AppShortName__"
 , "manifest_version": 2
 , "description": "__MSG_AppDesc__"
