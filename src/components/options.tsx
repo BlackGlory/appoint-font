@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react'
 import { useMount, useToggle } from 'extra-react-hooks'
 import { Select } from '@components/select'
-import { FontPreview } from '@components/font-preview'
 import { go } from '@blackglory/prelude'
 import { getFontLists } from '@utils/font-list'
 import { createBackgroundClient } from '@delight-rpc/webextension'
@@ -145,21 +144,6 @@ export function Options() {
                   />
                 </aside>
               </div>
-
-              {rule.fontFamily && (
-                <div className='space-y-2'>
-                  <h3>预览</h3>
-                  <FontPreview
-                    fontFamily={rule.fontFamily}
-                    initialFontSize={16}
-                  >
-                    <div className='rounded-md p-2 bg-gray-100'>
-                      <p>我能吞下玻璃而不伤身体。</p>
-                      <p>I can eat glass, it does not hurt me.</p>
-                    </div>
-                  </FontPreview>
-                </div>
-              )}
             </li>
           )
         })}
@@ -183,9 +167,25 @@ function AdvancedOptions() {
         <span>高级选项</span>
       </label>
       <section>
-        <label>页面匹配器(只有满足匹配条件的页面会应用此规则)</label>
+        <label>
+          <input
+            className='border accent-gray-700'
+            type='checkbox'
+            checked={toggled}
+            onClick={setToggle}
+          />
+          <span>只有满足下列条件的页面会应用此规则</span>
+        </label>
 
-        <label>Unicode范围匹配器(只有此Unicode范围内的字符会应用此规则)</label>
+        <label>
+          <input
+            className='border accent-gray-700'
+            type='checkbox'
+            checked={toggled}
+            onClick={setToggle}
+          />
+          <span>限制自定义字体的字重</span>
+        </label>
       </section>
     </div>
   )

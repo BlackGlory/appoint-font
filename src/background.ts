@@ -140,10 +140,7 @@ async function convertRuleToCSS(
           results.push(createFontFaceRule(
             fontFamilyAlias
           , await getFontFamilyAliases(rule.fontFamily)
-          , {
-              fontWeight: rule.fontWeight
-            , unicodeRange: rule.unicodeRange
-            }
+          , { fontWeight: rule.fontWeight }
           ))
         }
       }

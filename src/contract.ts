@@ -34,13 +34,6 @@ export enum MatchType {
 , Host
 }
 
-export enum Language {
-  Chinese
-, SimplifiedChinese
-, TraditionalChinese
-, English
-}
-
 export interface IRule {
   id: string
   enabled: boolean
@@ -48,7 +41,6 @@ export interface IRule {
   fontFamily?: string
   matcher?: Matcher
   fontWeight?: string
-  unicodeRange?: string
 }
 
 export type Matcher =
