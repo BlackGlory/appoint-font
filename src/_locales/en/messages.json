@@ -1,7 +1,7 @@
 {
   "AppName": { "message": "Appoint Font" }
-, "AppDesc": { "message": "The font is appointed by the dictator." }
-, "AppShortName": { "message": "Appoint" }
+, "AppDesc": { "message": "The most violent extension for browser font setting." }
+, "ActionTitle": { "message": "Options" }
 , "Standard": { "message": "Standard: " }
 , "FixedWidth": { "message": "FixedWidth: " }
 }
