@@ -1,5 +1,5 @@
 import { dedent } from 'extra-tags'
-import { isNumber, isString } from 'extra-utils'
+import { isNumber, isString } from '@blackglory/prelude'
 
 // @font-face的字重允许1~2个值.
 type FontFaceFontWeight = 
