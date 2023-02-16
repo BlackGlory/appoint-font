@@ -1,4 +1,4 @@
-import { toArray } from '@blackglory/prelude'
+import { isntUndefined, toArray } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import {
   IAPI
@@ -6,10 +6,13 @@ import {
 , IConfigStore
 , IFontList
 , StorageItemKey
+, IRule
+, FontType
 } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
 import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
-import { IRule, matchRuleMatcher, FontType } from '@utils/rule'
+import { matchRuleMatcher } from '@utils/matcher'
+import { dedent } from 'extra-tags'
 import { uniq } from 'iterable-operator'
 
 createServer<IAPI>({
@@ -33,20 +36,19 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
     case 'complete': {
       const fontList = await getFontList()
       const config = await getConfig()
-      const filteredRules = [
-        ...(config.rules ?? [])
-          .filter(x => x.enabled)
-          .filter(x => {
-            if (x.matcher && tab.url) {
-              return matchRuleMatcher(tab.url, x.matcher)
-            } else {
-              return true
-            }
-          })
-      ]
+      const filteredRules = (config.rules ?? [])
+        .filter(x => x.enabled)
+        .filter(x => {
+          if (x.matcher && tab.url) {
+            return matchRuleMatcher(tab.url, x.matcher)
+          } else {
+            return true
+          }
+        })
 
       const css: string = filteredRules
         .map(rule => convertRuleToCSS(rule, fontList))
+        .filter(isntUndefined)
         .join('\n')
 
       await chrome.scripting.insertCSS(
@@ -96,7 +98,10 @@ async function getFontList(): Promise<IFontList> {
   return storage[StorageItemKey.FontList] ?? {}
 }
 
-async function convertRuleToCSS(rule: IRule, fontList: IFontList): Promise<string> {
+async function convertRuleToCSS(
+  rule: IRule
+, fontList: IFontList
+): Promise<string | undefined> {
   const allFontList: string[] = toArray(uniq([
     ...fontList.all ?? []
   , GenericFontFamily.Serif
@@ -143,8 +148,9 @@ async function convertRuleToCSS(rule: IRule, fontList: IFontList): Promise<strin
         }
       }
     }
-    return results.join('\n')
-  } else {
-    return ''
+    return dedent`
+      // Rule ID: ${rule.id}
+      ${results.join('\n')}
+    `
   }
 }

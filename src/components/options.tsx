@@ -1,18 +1,24 @@
 import { useState, useMemo } from 'react'
-import { useMount } from 'extra-react-hooks'
-import { FontSelect } from '@components/font-select'
+import { useMount, useToggle } from 'extra-react-hooks'
+import { Select } from '@components/select'
 import { FontPreview } from '@components/font-preview'
 import { go } from '@blackglory/prelude'
 import { getFontLists } from '@utils/font-list'
 import { createBackgroundClient } from '@delight-rpc/webextension'
 import { IAPI, IRule, FontType } from '@src/contract'
 import { nanoid } from 'nanoid'
+import { Button } from '@components/button'
+import { RemoveButton } from '@components/remove-button'
+import { UpButton } from '@components/up-button'
+import { DownButton } from '@components/down-button'
+import { Toggle } from '@components/toggle'
+import { useImmer } from 'use-immer'
 
 export function Options() {
   const client = useMemo(() => createBackgroundClient<IAPI>(), [])
   const [allFontList, setAllFontList] = useState<string[]>([])
   const [monospaceFontList, setMonospaceFontList] = useState<string[]>([])
-  const [rules, setRules] = useState<IRule[]>([])
+  const [rules, setRules] = useImmer<IRule[]>([])
 
   useMount(() => {
     go(async () => {
@@ -25,58 +31,119 @@ export function Options() {
 
       const config = await client.getConfig()
       if (config.rules) {
-        config.rules
+        setRules(config.rules)
       }
     })
   })
 
   return (
-    <div className='min-w-[600px] min-h-[500px] p-4 space-y-4 overflow-y-hidden'>
-      <button
-        className='border p-2'
-        onClick={() => setRules(rules => [
-          ...rules
-        , {
-            id: nanoid()
-          , enabled: true
-          , fontType: FontType.Standard
-          }
-        ])}
-      >
-        添加新规则
-      </button>
+    <div className='min-w-[500px] min-h-[500px]'>
+      <nav className='bg-gray-50 px-4 py-2 border-y sticky top-0 flex justify-between'>
+        <div className='space-x-2'>
+          <Button
+            onClick={() => setRules(rules => {
+              rules.push({
+                id: nanoid()
+              , enabled: true
+              , fontType: FontType.Standard
+              })
+            })}
+          >
+            添加规则
+          </Button>
+        </div>
 
-      <div className='space-y-2'>
-        {rules.map(rule => {
+        <div className='space-x-2'>
+          <Button onClick={() => setRules([])}>
+            清空规则
+          </Button>
+          <Button>
+            导入规则
+          </Button>
+          <Button>
+            导出规则
+          </Button>
+        </div>
+      </nav>
+
+      <ul className='py-2 px-4'>
+        {rules.map((rule, i) => {
           return (
-            <section key={rule.id} className='space-y-2 border'>
-              <label><input className='border' type='checkbox' />启用</label>
-              <button className='border'>移除</button>
-              <div className='flex space-x-2 items-center'>
-                <h2 className='text-base'>
-                  {go(() => {
-                    switch (rule.fontType) {
-                      case FontType.Standard: return '标准字体'
-                      case FontType.FixedWidth: return '等宽字体'
-                      default: throw new Error('Unexpected route')
-                    }
-                  })}
-                </h2>
-                <FontSelect
-                  fontList={
-                    go(() => {
-                      switch (rule.fontType) {
-                        case FontType.Standard: return allFontList
-                        case FontType.FixedWidth: return monospaceFontList
-                        default: throw new Error('Unexpected route')
+            <li key={rule.id} className='space-y-2 border-b py-2 last:border-b-0'>
+              <div className='flex justify-between'>
+                <div className='space-y-2'>
+                  <section className='flex items-center'>
+                    <label className='w-1/3'>规则类型</label>
+
+                    <Select
+                      items={[
+                        { name: '替换标准字体', value: FontType.Standard }
+                      , { name: '替换等宽字体', value: FontType.FixedWidth }
+                      ]}
+                      value={rule.fontType}
+                      onChange={fontType => setRules(rules => {
+                        rules[i].fontType = fontType
+                      })}
+                    />
+                  </section>
+
+                  <section className='flex items-center'>
+                    <label className='w-1/3'>自定义字体</label>
+
+                    <Select
+                      items={
+                        go(() => {
+                          switch (rule.fontType) {
+                            case FontType.Standard: return allFontList
+                            case FontType.FixedWidth: return monospaceFontList
+                            default: throw new Error('Unexpected route')
+                          }
+                        })
+                          .map(x => ({ name: x, value: x }))
                       }
-                    })
-                  }
-                  value={rule.fontFamily}
-                  onChange={fontFamily => {
-                    // TODO
-                  }}
-                />
+                      value={rule.fontFamily}
+                      onChange={fontFamily => setRules(rules => {
+                        rules[i].fontFamily = fontFamily
+                      })}
+                    />
+                  </section>
+
+                  <section className='flex items-center'>
+                    <AdvancedOptions />
+                  </section>
+                </div>
+
+                <aside className='space-x-2'>
+                  <RemoveButton
+                    onClick={() => setRules(rules => {
+                      rules.splice(i, 1)
+                    })}
+                  />
+                  <UpButton
+                    onClick={() => setRules(rules => {
+                      const previousRule = rules[i - 1]
+                      if (previousRule) {
+                        rules[i] = previousRule
+                        rules[i - 1] = rule
+                      }
+                    })}
+                  />
+                  <DownButton
+                    onClick={() => setRules(rules => {
+                      const nextRule = rules[i + 1]
+                      if (nextRule) {
+                        rules[i] = nextRule
+                        rules[i + 1] = rule
+                      }
+                    })}
+                  />
+                  <Toggle
+                    value={rule.enabled}
+                    onClick={value => setRules(rules => {
+                      rules[i].enabled = value
+                    })}
+                  />
+                </aside>
               </div>
 
               {rule.fontFamily && (
@@ -93,10 +160,33 @@ export function Options() {
                   </FontPreview>
                 </div>
               )}
-            </section>
+            </li>
           )
         })}
-      </div>
+      </ul>
+    </div>
+  )
+}
+
+function AdvancedOptions() {
+  const [toggled, setToggle] = useToggle(false)
+
+  return (
+    <div>
+      <label className='inline-flex space-x-1'>
+        <input
+          className='border accent-gray-700'
+          type='checkbox'
+          checked={toggled}
+          onClick={setToggle}
+        />
+        <span>高级选项</span>
+      </label>
+      <section>
+        <label>页面匹配器(只有满足匹配条件的页面会应用此规则)</label>
+
+        <label>Unicode范围匹配器(只有此Unicode范围内的字符会应用此规则)</label>
+      </section>
     </div>
   )
 }

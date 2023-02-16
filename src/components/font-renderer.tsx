@@ -6,7 +6,7 @@ interface IFontRendererProps {
 }
 
 export const FontRenderer = styled.div<IFontRendererProps>`
-  ${ ({ fontFamily, fontSize }) => css`
+  ${({ fontFamily, fontSize }) => css`
     font-family: ${ fontFamily };
     font-size: ${ fontSize }px;
   `}

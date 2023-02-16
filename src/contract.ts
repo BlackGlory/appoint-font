@@ -1,6 +1,3 @@
-import { IRule } from '@utils/rule'
-export { IRule, FontType, MatchType } from '@utils/rule'
-
 export enum StorageItemKey {
   Config = 'config'
 , FontList = 'fontList'
@@ -25,4 +22,45 @@ export interface IFontList {
 
 export interface IConfigStore {
   rules?: IRule[]
+}
+
+export enum FontType {
+  Standard
+, FixedWidth
+}
+
+export enum MatchType {
+  URL
+, Host
+}
+
+export enum Language {
+  Chinese
+, SimplifiedChinese
+, TraditionalChinese
+, English
+}
+
+export interface IRule {
+  id: string
+  enabled: boolean
+  fontType: FontType
+  fontFamily?: string
+  matcher?: Matcher
+  fontWeight?: string
+  unicodeRange?: string
+}
+
+export type Matcher =
+| IURLMatcher
+| IHostMatcher
+
+interface IURLMatcher {
+  type: MatchType.URL
+  patterns: string[]
+}
+
+interface IHostMatcher {
+  type: MatchType.Host
+  patterns: string[]
 }

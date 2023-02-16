@@ -7,7 +7,7 @@ interface IFontSizeSliderProps {
 
 export function FontSizeController({ min, max, value, onChange }: IFontSizeSliderProps) {
   return (
-    <div className='flex space-x-2'>
+    <div className='space-x-2'>
       <input
         type='range'
         min={min}
@@ -17,7 +17,7 @@ export function FontSizeController({ min, max, value, onChange }: IFontSizeSlide
         onChange={e => onChange(e.target.valueAsNumber)}
       />
 
-      <div>
+      <label>
         <input
           type='number'
           className='border w-8'
@@ -28,7 +28,7 @@ export function FontSizeController({ min, max, value, onChange }: IFontSizeSlide
           onChange={e => onChange(e.target.valueAsNumber)}
         />
         <span>px</span>
-      </div>
+      </label>
     </div>
   )
 }
