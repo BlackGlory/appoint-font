@@ -17,11 +17,8 @@ export function Select<T>({ value, items, onChange }: IFontSelectProps<T>) {
 
   return (
     <div className='h-6 w-52'>
-      <Listbox value={item?.name} onChange={name => {
-        const item = items.find(x => x.name === name)
-        if (item) {
-          onChange(item?.value)
-        }
+      <Listbox value={item?.value} onChange={value => {
+        onChange(value)
       }}>
         <Listbox.Button className='pl-1 w-full h-full flex items-center border hover:bg-gray-300'>
           <span className='text-left flex-1'>{item?.name}</span>
@@ -34,7 +31,7 @@ export function Select<T>({ value, items, onChange }: IFontSelectProps<T>) {
           {items.map(item => (
             <Listbox.Option
               key={item.name}
-              value={item}
+              value={item.value}
               className='pl-1 cursor-pointer hover:bg-gray-300'
             >
               {item.name}

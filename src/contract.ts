@@ -38,9 +38,16 @@ export interface IRule {
   id: string
   enabled: boolean
   fontType: FontType
-  fontFamily?: string
-  matcher?: Matcher
-  fontWeight?: string
+  fontFamily: string
+
+  matchers: Matcher[]
+  matchersEnabled: boolean
+
+  fontWeight: string
+  fontWeightEnabled: boolean
+
+  unicodeRange: string
+  unicodeRangeEnabled: boolean
 }
 
 export type Matcher =
@@ -49,10 +56,10 @@ export type Matcher =
 
 interface IURLMatcher {
   type: MatchType.URL
-  patterns: string[]
+  pattern: string
 }
 
 interface IHostMatcher {
   type: MatchType.Host
-  patterns: string[]
+  pattern: string
 }

@@ -32,7 +32,7 @@ export async function getFontFamilyAliases(fontFamily: string): Promise<string[]
 }
 
 /**
- * 从浏览器API处查找fontFamily的别名.
+ * 从浏览器API处查找fontFamily的别名, **结果可能包含重复项**.
  * 
  * @returns 返回包括fontFamily自己在内的别名数组.
  * 例如, 在参数为`微软雅黑`的情况下, 视运行环境而定, 此函数可能会返回`微软雅黑`和`Microsoft YaHei`.
@@ -55,7 +55,7 @@ async function getFontFamilyAliasesFromAPI(
 }
 
 /**
- * 从预定义的别名表里查找fontFamily的别名.
+ * 从预定义的别名表里查找fontFamily的别名, **结果可能包含重复项**.
  * 
  * @returns 返回包括fontFamily自己在内的别名数组.
  * 例如, 在参数为`微软雅黑`的情况下, 视运行环境而定, 此函数可能会返回`微软雅黑`和`Microsoft YaHei`.
@@ -85,11 +85,11 @@ function getFontFamilyAliasesFromPredefinedTables(fontFamily: string): string[] 
   , ['苹果丽细宋', 'Apple LiSung Light']
   ]
 
-  const result = new Set<string>(fontFamily)
+  const results: string[] = []
   for (const fontFamilyAliasRow of fontFamilyAliasTable) {
     if (fontFamilyAliasRow.includes(fontFamily)) {
-      fontFamilyAliasRow.forEach(x => result.add(x))
+      fontFamilyAliasRow.forEach(x => results.push(x))
     }
   }
-  return toArray(result)
+  return results
 }

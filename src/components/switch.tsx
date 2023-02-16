@@ -1,14 +1,14 @@
-import { Switch } from '@headlessui/react'
+import { Switch as HeadlessSwitch } from '@headlessui/react'
 import classNames from 'classnames'
 
-interface IToggleProps {
+interface ISwitchProps {
   value: boolean
   onClick: (value: boolean) => void
 }
 
-export function Toggle({ value, onClick }: IToggleProps) {
+export function Switch({ value, onClick }: ISwitchProps) {
   return (
-    <Switch
+    <HeadlessSwitch
       checked={value}
       onChange={onClick}
       className={classNames(
@@ -22,6 +22,6 @@ export function Toggle({ value, onClick }: IToggleProps) {
         , value ? 'translate-x-6' : 'translate-x-1'
         )}
       />
-    </Switch>
+    </HeadlessSwitch>
   )
 }

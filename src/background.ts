@@ -1,4 +1,4 @@
-import { isntUndefined, toArray } from '@blackglory/prelude'
+import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import {
   IAPI
@@ -13,7 +13,8 @@ import { createFontFaceRule } from '@utils/font-face'
 import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
 import { matchRuleMatcher } from '@utils/matcher'
 import { dedent } from 'extra-tags'
-import { uniq } from 'iterable-operator'
+import { uniq, mapAsync, filterAsync, toArray, toArrayAsync } from 'iterable-operator'
+import { pipe } from 'extra-utils'
 
 createServer<IAPI>({
   getConfig
@@ -39,17 +40,26 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       const filteredRules = (config.rules ?? [])
         .filter(x => x.enabled)
         .filter(x => {
-          if (x.matcher && tab.url) {
-            return matchRuleMatcher(tab.url, x.matcher)
+          if (x.matchersEnabled && tab.url) {
+            const url = tab.url
+            return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
           } else {
             return true
           }
         })
 
-      const css: string = filteredRules
-        .map(rule => convertRuleToCSS(rule, fontList))
-        .filter(isntUndefined)
-        .join('\n')
+      const css: string = await pipe(
+        filteredRules
+      , iter => mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
+      , iter => filterAsync(iter, isntUndefined)
+      , toArrayAsync
+      , async values => (await values).join('\n')
+      )
+      console.log({
+        title: tab.title
+      , url: tab.url
+      , css
+      })
 
       await chrome.scripting.insertCSS(
         {
@@ -140,7 +150,10 @@ async function convertRuleToCSS(
           results.push(createFontFaceRule(
             fontFamilyAlias
           , await getFontFamilyAliases(rule.fontFamily)
-          , { fontWeight: rule.fontWeight }
+          , {
+              fontWeight: rule.fontWeightEnabled ? rule.fontWeight : undefined
+            , unicodeRange: rule.unicodeRangeEnabled ? rule.unicodeRange : undefined
+            }
           ))
         }
       }

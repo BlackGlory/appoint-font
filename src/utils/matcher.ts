@@ -4,10 +4,10 @@ import { MatchType, Matcher } from '@src/contract'
 export function matchRuleMatcher(url: string, matcher: Matcher): boolean {
   switch (matcher.type) {
     case MatchType.URL: {
-      return matcher.patterns.some(pattern => matchURLPattern(url, pattern))
+      return matchURLPattern(url, matcher.pattern)
     }
     case MatchType.Host: {
-      return matcher.patterns.some(pattern => matchHostPattern(url, pattern))
+      return matchHostPattern(url, matcher.pattern)
     }
     default: throw new Error('Unexpected route')
   }

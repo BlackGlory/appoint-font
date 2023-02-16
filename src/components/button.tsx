@@ -6,7 +6,7 @@ export function Button(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
       {...props}
       className={
         classNames(
-          'border py-1.5 px-4 hover:bg-gray-300 disabled:bg-gray-300'
+          'border py-1 px-4 hover:bg-gray-300 disabled:bg-gray-300'
         , props.className
         )
       }
