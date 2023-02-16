@@ -17,11 +17,12 @@ export function Select<T>({ value, items, onChange }: IFontSelectProps<T>) {
 
   return (
     <div className='h-6 w-52'>
-      <Listbox value={item?.value} onChange={value => {
-        onChange(value)
-      }}>
+      <Listbox
+        value={value}
+        onChange={value => onChange(value)}
+      >
         <Listbox.Button className='pl-1 w-full h-full flex items-center border hover:bg-gray-300'>
-          <span className='text-left flex-1'>{item?.name}</span>
+          <span className='text-left flex-1'>{item?.name ?? ''}</span>
           <ChevronUpDownIcon
             className='h-5 w-5 text-gray-400'
             aria-hidden='true'
