@@ -1,7 +1,59 @@
 {
-  "AppName": { "message": "钦定字体" }
-, "AppDesc": { "message": "我讲的意思不是我是钦定它当默认字体。你问我不支……支持不支持，我说支持。我就明确地给你告诉这一点。" }
-, "AppShortName": { "message": "钦定" }
-, "Standard": { "message": "标准字体：" }
-, "FixedWidth": { "message": "等宽字体：" }
+  "extensionName": {
+    "message": "钦定字体"
+  }
+, "extensionDescription": {
+    "message": "最简单的字体设置扩展程序"
+  }
+, "labelAdvancedOptions": {
+    "message": "高级选项"
+  }
+, "labelLimitCustomFontPrefix": {
+    "message": "限制自定义字体的"
+  }
+, "labelFontWeight": {
+    "message": "字重"
+  }
+, "labelUnicodeRange": {
+    "message": "Unicode范围"
+  }
+, "labelMatchers": {
+    "message": "仅在至少符合以下一个条件的页面里应用此规则"
+  }
+, "labelRuleType": {
+    "message": "规则类型"
+  }
+, "labelCustomFont": {
+    "message": "自定义字体"
+  }
+, "selectReplaceStandardFonts": {
+    "message": "替换标准字体"
+  }
+, "selectReplaceFixedWidthFonts": {
+    "message": "替换等宽字体"
+  }
+, "buttonCreateRule": {
+    "message": "添加规则"
+  }
+, "buttonClearRules": {
+    "message": "清空规则"
+  }
+, "buttonImportRules": {
+    "message": "导入规则"
+  }
+, "buttonExportRules": {
+    "message": "导出规则"
+  }
+, "buttonCreateCondition": {
+    "message": "添加条件"
+  }
+, "buttonConditionType": {
+    "message": "条件类型"
+  }
+, "selectMatchHost": {
+    "message": "匹配主机名（可使用通配符）"
+  }
+, "selectMatchURL": {
+    "message": "匹配URL（可使用通配符）"
+  }
 }

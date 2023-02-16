@@ -5,6 +5,7 @@ import { Updater } from 'use-immer'
 import { NewTabLink } from '@components/new-tab-link'
 import { TextInput } from '@components/text-input'
 import { MatcherOptions } from '@components/matcher-options'
+import { i18n } from '@utils/i18n'
 
 interface IAdvancedOptionsProps {
   rule: IRule
@@ -16,7 +17,7 @@ interface IAdvancedOptionsProps {
 export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptionsProps) {
   return (
     <div className='bg-gray-100 p-1'>
-      <Expandable label='高级选项'>
+      <Expandable label={i18n('labelAdvancedOptions')}>
         <div className='space-y-2 p-1'>
           <section>
             <Checkbox
@@ -25,7 +26,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
                 config.rules![ruleIndex].matchersEnabled = enabled
               })}
             >
-              仅在至少满足以下一个条件的页面里应用此规则
+              {i18n('labelMatchers')}
             </Checkbox>
 
             <MatcherOptions
@@ -43,7 +44,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
                 config.rules![ruleIndex].fontWeightEnabled = enabled
               })}
             >
-              限制自定义字体的<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight'>字重</NewTabLink>
+              {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight'>{i18n('labelFontWeight')}</NewTabLink>
             </Checkbox>
 
             <TextInput
@@ -62,7 +63,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
                 config.rules![ruleIndex].unicodeRangeEnabled = enabled
               })}
             >
-              限制自定义字体的<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range'>Unicode范围</NewTabLink>
+              {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range'>{i18n('labelUnicodeRange')}</NewTabLink>
             </Checkbox>
 
             <TextInput

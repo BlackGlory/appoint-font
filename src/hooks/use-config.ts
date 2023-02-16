@@ -25,12 +25,10 @@ export function useConfig(client: DelightRPC.ClientProxy<IAPI>): [
     go(async () => {
       if (isFunction(arg)) {
         const newConfig = produce(config, arg)
-        console.log(newConfig)
         setConfig(newConfig)
         await client.setConfig(newConfig)
       } else {
         const newConfig = arg
-        console.log(newConfig)
         setConfig(newConfig)
         await client.setConfig(newConfig)
       }

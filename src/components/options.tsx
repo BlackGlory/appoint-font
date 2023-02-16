@@ -13,6 +13,7 @@ import { DownButton } from '@components/down-button'
 import { Switch } from '@components/switch'
 import { AdvancedOptions } from '@components/advanced-options'
 import { useConfig } from '@hooks/use-config'
+import { i18n } from '@utils/i18n'
 
 export function Options() {
   const client = useMemo(() => createBackgroundClient<IAPI>(), [])
@@ -56,7 +57,7 @@ export function Options() {
             , unicodeRange: ''
             })
           })}>
-            添加规则
+            {i18n('buttonCreateRule')}
           </Button>
         </div>
 
@@ -64,13 +65,13 @@ export function Options() {
           <Button onClick={() => setConfig(config => {
             config.rules = []
           })}>
-            清空规则
+            {i18n('buttonClearRules')}
           </Button>
           <Button>
-            导入规则
+            {i18n('buttonImportRules')}
           </Button>
           <Button>
-            导出规则
+            {i18n('buttonExportRules')}
           </Button>
         </div>
       </nav>
@@ -82,12 +83,18 @@ export function Options() {
               <div className='flex justify-between'>
                 <div className='space-y-2'>
                   <section className='flex items-center'>
-                    <label className='w-1/3'>规则类型</label>
+                    <label className='w-1/3'>{i18n('labelRuleType')}</label>
 
                     <Select
                       items={[
-                        { name: '替换标准字体', value: FontType.Standard }
-                      , { name: '替换等宽字体', value: FontType.FixedWidth }
+                        {
+                          name: i18n('selectReplaceStandardFonts')
+                        , value: FontType.Standard
+                        }
+                      , {
+                          name: i18n('selectReplaceFixedWidthFonts')
+                        , value: FontType.FixedWidth
+                        }
                       ]}
                       value={rule.fontType}
                       onChange={fontType => setConfig(config => {
@@ -97,7 +104,7 @@ export function Options() {
                   </section>
 
                   <section className='flex items-center'>
-                    <label className='w-1/3'>自定义字体</label>
+                    <label className='w-1/3'>{i18n('labelCustomFont')}</label>
 
                     <Select
                       items={

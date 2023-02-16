@@ -1,7 +1,59 @@
 {
-  "AppName": { "message": "Appoint Font" }
-, "AppDesc": { "message": "The most violent extension for browser font setting." }
-, "ActionTitle": { "message": "Options" }
-, "Standard": { "message": "Standard: " }
-, "FixedWidth": { "message": "FixedWidth: " }
+  "extensionName": {
+    "message": "Appoint Font"
+  }
+, "extensionDescription": {
+    "message": "The easiest font setting extension"
+  }
+, "labelAdvancedOptions": {
+    "message": "Advanced Options"
+  }
+, "labelLimitCustomFontPrefix": {
+    "message": "Limit custom fonts "
+  }
+, "labelFontWeight": {
+    "message": "font weight"
+  }
+, "labelUnicodeRange": {
+    "message": "Unicode range"
+  }
+, "labelMatchers": {
+    "message": "Apply this rule only to pages that meet at least one of the following conditions"
+  }
+, "labelRuleType": {
+    "message": "Rule Type"
+  }
+, "labelCustomFont": {
+    "message": "Custom Font"
+  }
+, "selectReplaceStandardFonts": {
+    "message": "Replace standard fonts"
+  }
+, "selectReplaceFixedWidthFonts": {
+    "message": "Replace fixed-width fonts"
+  }
+, "buttonCreateRule": {
+    "message": "Create Rule"
+  }
+, "buttonClearRules": {
+    "message": "Clear Rules"
+  }
+, "buttonImportRules": {
+    "message": "Import Rules"
+  }
+, "buttonExportRules": {
+    "message": "Export Rules"
+  }
+, "buttonCreateCondition": {
+    "message": "Create Condition"
+  }
+, "buttonConditionType": {
+    "message": "Condition Type"
+  }
+, "selectMatchHost": {
+    "message": "Match host (with wildcards)"
+  }
+, "selectMatchURL": {
+    "message": "Match URL (with wildcards)"
+  }
 }

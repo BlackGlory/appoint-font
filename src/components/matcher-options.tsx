@@ -4,6 +4,7 @@ import { Select } from '@components/select'
 import { Button } from '@components/button'
 import { RemoveButton } from '@components/remove-button'
 import { TextInput } from '@components/text-input'
+import { i18n } from '@utils/i18n'
 
 interface IMatcherOptionsProps {
   rule: IRule
@@ -28,19 +29,19 @@ export function MatcherOptions({
           })
         })}
       >
-        添加条件
+        {i18n('buttonCreateCondition')}
       </Button>
 
       <ul className='space-y-2'>
         {rule.matchers.map((matcher, i) => (
           <li className='space-y-0.5'>
             <div className='flex items-center space-x-2'>
-              <label>条件类型</label>
+              <label>{i18n('buttonConditionType')}</label>
 
               <Select
                 items={[
-                  { name: '匹配主机名（可使用通配符）', value: MatchType.Host }
-                , { name: '匹配URL（可使用通配符）', value: MatchType.URL }
+                  { name: i18n('selectMatchHost'), value: MatchType.Host }
+                , { name: i18n('selectMatchURL'), value: MatchType.URL }
                 ]}
                 value={matcher.type}
                 onChange={type => setConfig(config => {

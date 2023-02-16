@@ -1,7 +1,59 @@
 {
-  "AppName": { "message": "欽定字體" }
-, "AppDesc": { "message": "我講的意思不是我是欽定它當默認字體。你問我不支……支持不支持，我說支持。我就明確地給你告訴這一點。" }
-, "AppShortName": { "message": "欽定" }
-, "Standard": { "message": "標準字體：" }
-, "FixedWidth": { "message": "等寬字體：" }
+  "extensionName": {
+    "message": "欽定字體"
+  }
+, "extensionDescription": {
+    "message": "最簡單的字體設置擴展程序"
+  }
+, "labelAdvancedOptions": {
+    "message": "高級選項"
+  }
+, "labelLimitCustomFontPrefix": {
+    "message": "限制自定義字體的"
+  }
+, "labelFontWeight": {
+    "message": "字重"
+  }
+, "labelUnicodeRange": {
+    "message": "Unicode範圍"
+  }
+, "labelMatchers": {
+    "message": "僅在至少符合以下一個條件的頁面裡應用此規則"
+  }
+, "labelRuleType": {
+    "message": "規則類型"
+  }
+, "labelCustomFont": {
+    "message": "自定義字體"
+  }
+, "selectReplaceStandardFonts": {
+    "message": "替換標準字體"
+  }
+, "selectReplaceFixedWidthFonts": {
+    "message": "替換等寬字體"
+  }
+, "buttonCreateRule": {
+    "message": "添加規則"
+  }
+, "buttonClearRules": {
+    "message": "清空規則"
+  }
+, "buttonImportRules": {
+    "message": "導入規則"
+  }
+, "buttonExportRules": {
+    "message": "導出規則"
+  }
+, "buttonCreateCondition": {
+    "message": "添加條件"
+  }
+, "buttonConditionType": {
+    "message": "條件類型"
+  }
+, "selectMatchHost": {
+    "message": "匹配主機名（可使用通配符）"
+  }
+, "selectMatchURL": {
+    "message": "匹配URL（可使用通配符）"
+  }
 }

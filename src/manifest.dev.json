@@ -1,13 +1,14 @@
 {
-  "name": "__MSG_AppName__"
+  "name": "__MSG_extensionName__"
 , "version": "2023.0.0"
-, "short_name": "__MSG_AppShortName__"
 , "manifest_version": 3
-, "description": "__MSG_AppDesc__"
 , "default_locale": "en"
+, "description": "__MSG_extensionDescription__"
 , "icons": {
     "16": "assets/images/icon-16.png"
+  , "32": "assets/images/icon-32.png"
   , "48": "assets/images/icon-48.png"
+  , "64": "assets/images/icon-64.png"
   , "128": "assets/images/icon-128.png"
   }
 , "options_ui": {
