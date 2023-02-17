@@ -44,7 +44,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
                 config.rules![ruleIndex].fontWeightEnabled = enabled
               })}
             >
-              {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/font-weight'>{i18n('labelFontWeight')}</NewTabLink>
+              {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-weight'>{i18n('labelFontWeight')}</NewTabLink>
             </Checkbox>
 
             <TextInput

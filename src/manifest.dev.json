@@ -23,6 +23,7 @@
   , "fontSettings"
   , "webNavigation"
   , "scripting"
+  , "downloads"
   ]
 , "host_permissions": [
     "<all_urls>"

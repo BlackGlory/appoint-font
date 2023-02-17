@@ -59,6 +59,7 @@
     "extra-utils": "^5.0.1",
     "immer": "^9.0.19",
     "iterable-operator": "^4.0.3",
+    "js-base64": "^3.7.5",
     "micromatch": "^4.0.5",
     "nanoid": "^4.0.1",
     "react": "^18.2.0",

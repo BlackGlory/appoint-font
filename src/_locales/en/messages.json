@@ -56,4 +56,7 @@
 , "selectMatchURL": {
     "message": "Match URL (with wildcards)"
   }
+, "alertInvalidRuleFile": {
+    "message": "Invalid rule file"
+  }
 }
