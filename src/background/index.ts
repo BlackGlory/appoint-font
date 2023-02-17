@@ -4,7 +4,7 @@ import {
   IAPI
 , IStorage
 , IConfigStore
-, IFontList
+, IFontListStore
 , StorageItemKey
 , IRule
 , FontType
@@ -15,6 +15,8 @@ import { matchRuleMatcher } from '@utils/matcher'
 import { dedent } from 'extra-tags'
 import { uniq, mapAsync, filterAsync, toArray, toArrayAsync } from 'iterable-operator'
 import { pipe } from 'extra-utils'
+import { migrate } from './migrate'
+import { generateFontLists } from '@utils/font-list'
 
 createServer<IAPI>({
   getConfig
@@ -23,11 +25,22 @@ createServer<IAPI>({
 , getFontList
 })
 
-// 在安装后打开设置页面.
-chrome.runtime.onInstalled.addListener(async ({ reason }) => {
-  if (reason === 'install') {
-    const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
-    await chrome.tabs.create({ url: optionsPageURL })
+chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
+  switch (reason) {
+    case 'install': {
+      // 在安装后打开设置页面.
+      const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
+      await chrome.tabs.create({ url: optionsPageURL })
+      break
+    }
+    case 'update': {
+      // 在升级后执行迁移.
+      if (previousVersion) {
+        const currentVersion = chrome.runtime.getManifest().version
+        await migrate(previousVersion, currentVersion)
+      }
+      break
+    }
   }
 })
 
@@ -74,9 +87,9 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
   }
 })
 
-async function setConfig(_config: IConfigStore): Promise<null> {
+async function setConfig(config: IConfigStore): Promise<null> {
   await chrome.storage.local.set({
-    [StorageItemKey.Config]: _config
+    [StorageItemKey.Config]: config
   })
 
   return null
@@ -91,26 +104,33 @@ async function getConfig(): Promise<IConfigStore> {
   return storage[StorageItemKey.Config] ?? {}
 }
 
-async function setFontList(_fontList: IFontList): Promise<null> {
+async function setFontList(fontList: IFontListStore): Promise<null> {
   await chrome.storage.local.set({
-    [StorageItemKey.FontList]: _fontList
+    [StorageItemKey.FontList]: fontList
   })
 
   return null
 }
 
-async function getFontList(): Promise<IFontList> {
+async function getFontList(): Promise<IFontListStore> {
   const storage: Pick<
     IStorage
   , StorageItemKey.FontList
   > = await chrome.storage.local.get(StorageItemKey.FontList)
 
-  return storage[StorageItemKey.FontList] ?? {}
+  const fontList = storage[StorageItemKey.FontList]
+  if (fontList) {
+    return fontList
+  } else {
+    const fontLists = await generateFontLists()
+    await setFontList(fontLists)
+    return fontLists
+  }
 }
 
 async function convertRuleToCSS(
   rule: IRule
-, fontList: IFontList
+, fontList: IFontListStore
 ): Promise<string | undefined> {
   const allFontList: string[] = toArray(uniq([
     ...fontList.all ?? []

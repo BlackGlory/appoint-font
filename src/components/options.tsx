@@ -2,7 +2,6 @@ import { useState, useMemo } from 'react'
 import { useMount } from 'extra-react-hooks'
 import { Select } from '@components/select'
 import { assert, go, isntUndefined } from '@blackglory/prelude'
-import { getFontLists } from '@utils/font-list'
 import { createBackgroundClient } from '@delight-rpc/webextension'
 import { IAPI, FontType } from '@src/contract'
 import { nanoid } from 'nanoid'
@@ -36,12 +35,10 @@ export function Options() {
 
   useMount(() => {
     go(async () => {
-      const { all, monospace } = await getFontLists()
+      const { all, monospace } = await client.getFontList()
 
       setAllFontList(all)
       setMonospaceFontList(monospace)
-
-      await client.setFontList({ all, monospace })
     })
   })
 

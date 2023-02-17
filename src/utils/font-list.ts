@@ -1,7 +1,8 @@
-import { IFontList } from '@src/contract'
+import { IFontListStore } from '@src/contract'
 import { getBrowserFixedFontSize } from '@utils/font-settings'
+import { assert } from '@blackglory/prelude'
 
-export async function getFontLists(): Promise<Required<IFontList>> {
+export async function generateFontLists(): Promise<IFontListStore> {
   const browserFontNames = await chrome.fontSettings.getFontList()
   const fontSize = await getBrowserFixedFontSize()
   const fontList: string[] = browserFontNames.map(x => x.fontId)
@@ -23,9 +24,8 @@ function isMonospace(fontFamily: string, fontSize: number): boolean {
 }
 
 function measureTextWidth(font: string, fontSize: number, text: string): number {
-  const ctx = document
-    .createElement('canvas')
-    .getContext('2d')!
+  const ctx = new OffscreenCanvas(1000, 1000).getContext('2d')
+  assert(ctx, 'The ctx is null')
 
   ctx.font = `${fontSize}px ${font}`
 

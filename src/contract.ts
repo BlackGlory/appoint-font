@@ -6,18 +6,18 @@ export enum StorageItemKey {
 export interface IAPI {
   setConfig(config: IConfigStore): null
   getConfig(): IConfigStore
-  setFontList(fontList: IFontList): null
-  getFontList(): IFontList
+  setFontList(fontList: IFontListStore): null
+  getFontList(): IFontListStore
 }
 
 export interface IStorage {
   [StorageItemKey.Config]?: IConfigStore
-  [StorageItemKey.FontList]?: IFontList
+  [StorageItemKey.FontList]?: IFontListStore
 }
 
-export interface IFontList {
-  all?: string[]
-  monospace?: string[]
+export interface IFontListStore {
+  all: string[]
+  monospace: string[]
 }
 
 export interface IConfigStore {

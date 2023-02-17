@@ -6,7 +6,7 @@ const { ProvidePlugin } = require('webpack')
 module.exports = {
   target: 'web'
 , entry: {
-    'background': './src/background.ts'
+    'background': './src/background/index.ts'
   , 'options': './src/options/index.tsx'
   }
 , output: {
