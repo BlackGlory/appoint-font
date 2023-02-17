@@ -1,9 +1,10 @@
 import { IFontListStore } from '@src/contract'
 import { getBrowserFixedFontSize } from '@utils/font-settings'
 import { assert } from '@blackglory/prelude'
+import { getBrowserFontList } from '@utils/font-settings'
 
 export async function generateFontLists(): Promise<IFontListStore> {
-  const browserFontNames = await chrome.fontSettings.getFontList()
+  const browserFontNames = await getBrowserFontList()
   const fontSize = await getBrowserFixedFontSize()
   const fontList: string[] = browserFontNames.map(x => x.fontId)
   const monospaceFontList: string[] = fontList

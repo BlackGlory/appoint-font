@@ -55,6 +55,8 @@
     "@heroicons/react": "^2.0.15",
     "classnames": "^2.3.2",
     "delight-rpc": "^5.0.4",
+    "extra-lazy": "^2.0.0",
+    "extra-promise": "^6.0.3",
     "extra-react-hooks": "^0.4.3",
     "extra-semver": "^0.2.1",
     "extra-tags": "^0.3.1",

@@ -1,4 +1,5 @@
 import { toArray } from '@blackglory/prelude'
+import { getBrowserFontList } from '@utils/font-settings'
 
 /**
  * 来自<https://developer.mozilla.org/en-US/docs/Web/CSS/font-family#values>
@@ -25,7 +26,7 @@ export async function getFontFamilyAliases(fontFamily: string): Promise<string[]
   getFontFamilyAliasesFromPredefinedTables(fontFamily)
     .forEach(alias => aliases.add(alias))
 
-  ;(await getFontFamilyAliasesFromAPI(fontFamily))
+  ;(await getBrowserFontFamilyAliases(fontFamily))
     .forEach(alias => aliases.add(alias))
 
   return toArray(aliases)
@@ -37,10 +38,10 @@ export async function getFontFamilyAliases(fontFamily: string): Promise<string[]
  * @returns 返回包括fontFamily自己在内的别名数组.
  * 例如, 在参数为`微软雅黑`的情况下, 视运行环境而定, 此函数可能会返回`微软雅黑`和`Microsoft YaHei`.
  */
-async function getFontFamilyAliasesFromAPI(
+async function getBrowserFontFamilyAliases(
   fontFamily: string
 ): Promise<string[]> {
-  const fontList = await chrome.fontSettings.getFontList()
+  const fontList = await getBrowserFontList()
   const fontName = fontList
     .find(({ displayName, fontId }) => {
       return displayName === fontFamily

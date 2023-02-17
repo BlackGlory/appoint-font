@@ -13,10 +13,11 @@ import { createFontFaceRule } from '@utils/font-face'
 import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
 import { matchRuleMatcher } from '@utils/matcher'
 import { dedent } from 'extra-tags'
-import { uniq, mapAsync, filterAsync, toArray, toArrayAsync } from 'iterable-operator'
+import * as Iter from 'iterable-operator'
 import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
 import { generateFontLists } from '@utils/font-list'
+import { all } from 'extra-promise'
 
 createServer<IAPI>({
   getConfig
@@ -44,47 +45,39 @@ chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
   }
 })
 
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  switch (changeInfo.status) {
-    case 'loading':
-    case 'complete': {
-      const fontList = await getFontList()
-      const config = await getConfig()
-      const filteredRules = (config.rules ?? [])
-        .filter(x => x.enabled)
-        .filter(x => {
-          if (x.matchersEnabled && tab.url) {
-            const url = tab.url
-            return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
-          } else {
-            return true
-          }
-        })
+chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
+  const { fontList, config } = await all({
+    fontList: getFontList()
+  , config: getConfig()
+  })
+  const filteredRules = (config.rules ?? [])
+    .filter(x => x.enabled)
+    .filter(x => {
+      if (x.matchersEnabled) {
+        return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
+      } else {
+        return true
+      }
+    })
 
-      const css: string = await pipe(
-        filteredRules
-      , iter => mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
-      , iter => filterAsync(iter, isntUndefined)
-      , toArrayAsync
-      , async values => (await values).join('\n')
-      )
-      console.log({
-        title: tab.title
-      , url: tab.url
-      , css
-      })
+  const css: string = await pipe(
+    filteredRules
+  , iter => Iter.mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
+  , iter => Iter.filterAsync(iter, isntUndefined)
+  , Iter.toArrayAsync
+  , async values => (await values).join('\n')
+  )
+  console.log({ url, css })
 
-      await chrome.scripting.insertCSS(
-        {
-          target: {
-            tabId: tabId
-          , allFrames: true
-          }
-        , css
-        }
-      )
+  await chrome.scripting.insertCSS(
+    {
+      target: {
+        tabId: tabId
+      , allFrames: true
+      }
+    , css
     }
-  }
+  )
 })
 
 async function setConfig(config: IConfigStore): Promise<null> {
@@ -132,7 +125,7 @@ async function convertRuleToCSS(
   rule: IRule
 , fontList: IFontListStore
 ): Promise<string | undefined> {
-  const allFontList: string[] = toArray(uniq([
+  const allFontList: string[] = Iter.toArray(Iter.uniq([
     ...fontList.all ?? []
   , GenericFontFamily.Serif
   , GenericFontFamily.SansSerif
@@ -148,7 +141,7 @@ async function convertRuleToCSS(
   , GenericFontFamily.Math
   , GenericFontFamily.Fangsong
   ]))
-  const monospaceFontList: string[] = toArray(uniq([
+  const monospaceFontList: string[] = Iter.toArray(Iter.uniq([
     ...fontList.monospace ?? []
   , GenericFontFamily.Monospace
   , GenericFontFamily.UIMonospace

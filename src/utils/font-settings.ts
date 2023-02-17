@@ -1,3 +1,5 @@
+import { lazy } from 'extra-lazy'
+
 /**
  * 取自`chrome.fontSettings.GenericFamily`
  */
@@ -16,6 +18,8 @@ enum GenericFamily {
 , Fantasy = 'fantasy'
 }
 
+export const getBrowserFontList = lazy(() => chrome.fontSettings.getFontList())
+
 export function getBrowserStandardFontFamily(): Promise<
   chrome.fontSettings.FontName | undefined
 > {
@@ -33,7 +37,7 @@ async function getBrowserGenericFamily(
 ): Promise<chrome.fontSettings.FontName | undefined> {
   const { fontId } = await chrome.fontSettings.getFont({ genericFamily })
 
-  const fontList = await chrome.fontSettings.getFontList()
+  const fontList = await getBrowserFontList()
   const font = fontList.find(x => x.fontId === fontId)
 
   return font

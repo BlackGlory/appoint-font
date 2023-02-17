@@ -1,5 +1,4 @@
 import { dedent } from 'extra-tags'
-import { isNumber, isString } from '@blackglory/prelude'
 
 /**
  * 创建CSS FontFace规则.
