@@ -4,15 +4,12 @@ import { assert } from '@blackglory/prelude'
 import { nanoid } from 'nanoid'
 import semver from 'semver'
 
-export async function migrate(
-  previousVersion: string
-, expectedVersion: string
-): Promise<void> {
+export async function migrate(previousVersion: string): Promise<void> {
   // 强制将不规范的版本号转换为semver
   const previousSemver = semver.coerce(previousVersion)?.version
   assert(previousSemver, 'The previousSemver is undefined')
 
-  const actualVersion = await pipeAsync(
+  await pipeAsync(
     previousSemver
   , createMigration('^2017.0.0', '2023.0.0', async () => {
       interface IOldStorage {
@@ -133,6 +130,4 @@ export async function migrate(
       await chrome.storage.local.remove(StorageItemKey.FontList)
     })
   )
-
-  assert(actualVersion === expectedVersion, 'Migration failed')
 }

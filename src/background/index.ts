@@ -36,8 +36,7 @@ chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
     case 'update': {
       // 在升级后执行迁移.
       if (previousVersion) {
-        const currentVersion = chrome.runtime.getManifest().version
-        await migrate(previousVersion, currentVersion)
+        await migrate(previousVersion)
       }
       break
     }
