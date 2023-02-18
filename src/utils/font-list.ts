@@ -1,20 +1,20 @@
-import { IFontListStore } from '@src/contract'
+import { IFontList } from '@src/contract'
 import { getBrowserFixedFontSize } from '@utils/font-settings'
 import { assert } from '@blackglory/prelude'
 import { getBrowserFontList } from '@utils/font-settings'
+import { lazy } from 'extra-lazy'
 
-export async function generateFontLists(): Promise<IFontListStore> {
+export const generateFontLists = lazy(async (): Promise<IFontList> => {
   const browserFontNames = await getBrowserFontList()
   const fontSize = await getBrowserFixedFontSize()
-  const fontList: string[] = browserFontNames.map(x => x.fontId)
-  const monospaceFontList: string[] = fontList
-    .filter(fontFamily => isMonospace(fontFamily, fontSize))
+  const monospaceFontList = browserFontNames
+    .filter(fontName => isMonospace(fontName.fontId, fontSize))
 
   return {
-    all: fontList
+    all: browserFontNames
   , monospace: monospaceFontList
   }
-}
+})
 
 function isMonospace(fontFamily: string, fontSize: number): boolean {
   const fixedWidthChars = 'ab'

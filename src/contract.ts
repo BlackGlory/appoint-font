@@ -1,23 +1,20 @@
 export enum StorageItemKey {
   Config = 'config'
-, FontList = 'fontList'
 }
 
-export interface IAPI {
+export interface IBackgroundAPI {
   setConfig(config: IConfigStore): null
   getConfig(): IConfigStore
-  setFontList(fontList: IFontListStore): null
-  getFontList(): IFontListStore
+  getFontList(): IFontList
 }
 
 export interface IStorage {
   [StorageItemKey.Config]?: IConfigStore
-  [StorageItemKey.FontList]?: IFontListStore
 }
 
-export interface IFontListStore {
-  all: string[]
-  monospace: string[]
+export interface IFontList {
+  all: chrome.fontSettings.FontName[]
+  monospace: chrome.fontSettings.FontName[]
 }
 
 export interface IConfigStore {

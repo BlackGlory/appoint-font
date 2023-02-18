@@ -1,10 +1,10 @@
 import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import {
-  IAPI
+  IBackgroundAPI
 , IStorage
 , IConfigStore
-, IFontListStore
+, IFontList
 , StorageItemKey
 , IRule
 , FontType
@@ -19,10 +19,9 @@ import { migrate } from './migrate'
 import { generateFontLists } from '@utils/font-list'
 import { all } from 'extra-promise'
 
-createServer<IAPI>({
+createServer<IBackgroundAPI>({
   getConfig
 , setConfig
-, setFontList
 , getFontList
 })
 
@@ -97,36 +96,17 @@ async function getConfig(): Promise<IConfigStore> {
   return storage[StorageItemKey.Config] ?? {}
 }
 
-async function setFontList(fontList: IFontListStore): Promise<null> {
-  await chrome.storage.local.set({
-    [StorageItemKey.FontList]: fontList
-  })
-
-  return null
-}
-
-async function getFontList(): Promise<IFontListStore> {
-  const storage: Pick<
-    IStorage
-  , StorageItemKey.FontList
-  > = await chrome.storage.local.get(StorageItemKey.FontList)
-
-  const fontList = storage[StorageItemKey.FontList]
-  if (fontList) {
-    return fontList
-  } else {
-    const fontLists = await generateFontLists()
-    await setFontList(fontLists)
-    return fontLists
-  }
+async function getFontList(): Promise<IFontList> {
+  const fontLists = await generateFontLists()
+  return fontLists
 }
 
 async function convertRuleToCSS(
   rule: IRule
-, fontList: IFontListStore
+, fontList: IFontList
 ): Promise<string | undefined> {
   const allFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.all ?? []
+    ...fontList.all.map(x => x.fontId) ?? []
   , GenericFontFamily.Serif
   , GenericFontFamily.SansSerif
   , GenericFontFamily.Monospace
@@ -142,7 +122,7 @@ async function convertRuleToCSS(
   , GenericFontFamily.Fangsong
   ]))
   const monospaceFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.monospace ?? []
+    ...fontList.monospace.map(x => x.fontId) ?? []
   , GenericFontFamily.Monospace
   , GenericFontFamily.UIMonospace
   ]))

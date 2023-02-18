@@ -1792,6 +1792,11 @@ extra-semver@^0.2.1:
     "@blackglory/errors" "^2.3.0"
     semver "^7.3.8"
 
+extra-sort@^0.1.1:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/extra-sort/-/extra-sort-0.1.1.tgz#b2ff7295ea252344baa2ce916c75e717cc1a9217"
+  integrity sha512-shazpfR2gVn3g1LNHDRWEoJwN5V64XdWpmZK2OvI7hLfH4aHeXqglitr8EW6saQG8ZevuynK2kEwyJqlpVDPeQ==
+
 extra-tags@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/extra-tags/-/extra-tags-0.3.1.tgz#f54c3a6c469d2bdcea0b57021e9e0f3d942c3c4f"
@@ -1827,6 +1832,14 @@ extra-utils@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/extra-utils/-/extra-utils-5.0.1.tgz#f55a0bf1d13fea69efe7ef347d9279e2cea89d92"
   integrity sha512-JWUo2COzPQ4iAb0w47OR/0+fVH+UXplQI55sXtaPCJBK2of75//oBs/hGwu0y0h/VyNpys7WSJR+02aA60Pc8w==
+  dependencies:
+    justypes "^4.1.0"
+    lodash-es "^4.17.21"
+
+extra-utils@^5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/extra-utils/-/extra-utils-5.1.0.tgz#f5520a3b2cd5a7e3b6a1049f01d6173a244a357e"
+  integrity sha512-CvskUlZyqdHzKqLYu+JhcmotjzTss14UODUqoobpqwAkswIFYL2sHXnasb/Lw/pSssd2jw6BI2sjArdJ/jNjfw==
   dependencies:
     justypes "^4.1.0"
     lodash-es "^4.17.21"

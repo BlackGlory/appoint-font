@@ -1,12 +1,12 @@
 import { useState, useCallback } from 'react'
 import { useMount } from 'extra-react-hooks'
-import { IAPI, IConfigStore } from '@src/contract'
+import { IBackgroundAPI, IConfigStore } from '@src/contract'
 import * as DelightRPC from 'delight-rpc'
 import { go, isFunction } from '@blackglory/prelude'
 import { Updater } from 'use-immer'
 import { produce } from 'immer'
 
-export function useConfig(client: DelightRPC.ClientProxy<IAPI>): [
+export function useConfig(client: DelightRPC.ClientProxy<IBackgroundAPI>): [
   config: IConfigStore
 , setConfig: Updater<IConfigStore>
 ] {

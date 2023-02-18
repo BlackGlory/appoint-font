@@ -3,7 +3,7 @@ import { useMount } from 'extra-react-hooks'
 import { Select } from '@components/select'
 import { assert, go, isntUndefined } from '@blackglory/prelude'
 import { createBackgroundClient } from '@delight-rpc/webextension'
-import { IAPI, FontType } from '@src/contract'
+import { IBackgroundAPI, FontType } from '@src/contract'
 import { nanoid } from 'nanoid'
 import { Button } from '@components/button'
 import { RemoveButton } from '@components/remove-button'
@@ -17,6 +17,7 @@ import { Base64 } from 'js-base64'
 import { isRuleArray } from '@utils/validator'
 import { Modal } from '@components/modal'
 import { useImmer } from 'use-immer'
+import { compareStringsAscending } from 'extra-sort'
 
 interface IModal {
   isOpen: boolean
@@ -24,9 +25,9 @@ interface IModal {
 }
 
 export function Options() {
-  const client = useMemo(() => createBackgroundClient<IAPI>(), [])
-  const [allFontList, setAllFontList] = useState<string[]>([])
-  const [monospaceFontList, setMonospaceFontList] = useState<string[]>([])
+  const client = useMemo(() => createBackgroundClient<IBackgroundAPI>(), [])
+  const [allFontList, setAllFontList] = useState<chrome.fontSettings.FontName[]>([])
+  const [monospaceFontList, setMonospaceFontList] = useState<chrome.fontSettings.FontName[]>([])
   const [config, setConfig] = useConfig(client)
   const [modal, setModal] = useImmer<IModal>({
     isOpen: false
@@ -178,8 +179,8 @@ export function Options() {
                             default: throw new Error('Unexpected route')
                           }
                         })
-                          .sort()
-                          .map(x => ({ name: x, value: x }))
+                          .map(x => ({ name: x.displayName, value: x.fontId }))
+                          .sort((a, b) => compareStringsAscending(a.name, b.name))
                       }
                       value={rule.fontFamily}
                       onChange={fontFamily => setConfig(config => {

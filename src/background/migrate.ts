@@ -1,12 +1,19 @@
 import { createMigration } from 'extra-semver'
-import { pipe } from 'extra-utils'
+import { pipeAsync } from 'extra-utils'
 import { assert } from '@blackglory/prelude'
 import { nanoid } from 'nanoid'
 import semver from 'semver'
 
-export async function migrate(previousVersion: string, expectedVersion: string): Promise<void> {
-  const actualVersion = await pipe(
-    semver.coerce(previousVersion) // 强制将不规范的版本号转换为semver
+export async function migrate(
+  previousVersion: string
+, expectedVersion: string
+): Promise<void> {
+  // 强制将不规范的版本号转换为semver
+  const previousSemver = semver.coerce(previousVersion)?.version
+  assert(previousSemver, 'The previousSemver is undefined')
+
+  const actualVersion = await pipeAsync(
+    previousSemver
   , createMigration('^2017.0.0', '2023.0.0', async () => {
       interface IOldStorage {
         config?: {
@@ -115,6 +122,15 @@ export async function migrate(previousVersion: string, expectedVersion: string):
       }
       await chrome.storage.local.clear()
       await chrome.storage.local.set(newStorage)
+    })
+  , createMigration('2023.0.0', '2023.0.1', async () => {
+      // 不再存储fontList了, 直接让它在内存里.
+      enum StorageItemKey {
+        Config = 'config'
+      , FontList = 'fontList'
+      }
+
+      await chrome.storage.local.remove(StorageItemKey.FontList)
     })
   )
 
