@@ -1,14 +1,19 @@
 import { IFontList } from '@src/contract'
-import { getBrowserFixedFontSize } from '@utils/font-settings'
 import { assert } from '@blackglory/prelude'
 import { getBrowserFontList } from '@utils/font-settings'
 import { lazy } from 'extra-lazy'
 
+const getCanvasContext = lazy(() => {
+  const ctx = new OffscreenCanvas(100, 100).getContext('2d')
+  assert(ctx, 'The ctx is null')
+
+  return ctx
+})
+
 export const generateFontLists = lazy(async (): Promise<IFontList> => {
   const browserFontNames = await getBrowserFontList()
-  const fontSize = await getBrowserFixedFontSize()
   const monospaceFontList = browserFontNames
-    .filter(fontName => isMonospace(fontName.fontId, fontSize))
+    .filter(fontName => isMonospace(fontName.fontId))
 
   return {
     all: browserFontNames
@@ -16,7 +21,7 @@ export const generateFontLists = lazy(async (): Promise<IFontList> => {
   }
 })
 
-function isMonospace(fontFamily: string, fontSize: number): boolean {
+function isMonospace(fontFamily: string, fontSize: number = 16): boolean {
   const fixedWidthChars = 'ab'
   const variableWidthChars = 'il'
 
@@ -25,9 +30,9 @@ function isMonospace(fontFamily: string, fontSize: number): boolean {
 }
 
 function measureTextWidth(font: string, fontSize: number, text: string): number {
-  const ctx = new OffscreenCanvas(1000, 1000).getContext('2d')
-  assert(ctx, 'The ctx is null')
+  const ctx = getCanvasContext()
 
+  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   ctx.font = `${fontSize}px ${font}`
 
   return ctx

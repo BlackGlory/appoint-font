@@ -52,11 +52,3 @@ export async function getBrowserMinimumFontSize(): Promise<number> {
   const { pixelSize } = await chrome.fontSettings.getMinimumFontSize()
   return pixelSize
 }
-
-/**
- * 不知道为什么Chrome专门给等宽字体的大小也提供了API.
- */
-export async function getBrowserFixedFontSize(): Promise<number> {
-  const { pixelSize } = await chrome.fontSettings.getDefaultFixedFontSize()
-  return pixelSize
-}
