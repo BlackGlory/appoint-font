@@ -1,14 +1,6 @@
 import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
-import {
-  IBackgroundAPI
-, IStorage
-, IConfigStore
-, IFontList
-, StorageItemKey
-, IRule
-, FontType
-} from '@src/contract'
+import { IBackgroundAPI, IFontList, IRule, FontType } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
 import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
 import { matchRuleMatcher } from '@utils/matcher'
@@ -18,12 +10,7 @@ import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
 import { generateFontLists } from '@utils/font-list'
 import { all } from 'extra-promise'
-
-createServer<IBackgroundAPI>({
-  getConfig
-, setConfig
-, getFontList
-})
+import { getConfig, setConfig } from './storage'
 
 chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
   switch (reason) {
@@ -78,22 +65,11 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   )
 })
 
-async function setConfig(config: IConfigStore): Promise<null> {
-  await chrome.storage.local.set({
-    [StorageItemKey.Config]: config
-  })
-
-  return null
-}
-
-async function getConfig(): Promise<IConfigStore> {
-  const storage: Pick<
-    IStorage
-  , StorageItemKey.Config
-  > = await chrome.storage.local.get(StorageItemKey.Config)
-
-  return storage[StorageItemKey.Config] ?? {}
-}
+createServer<IBackgroundAPI>({
+  getConfig
+, setConfig
+, getFontList
+})
 
 async function getFontList(): Promise<IFontList> {
   const fontLists = await generateFontLists()
