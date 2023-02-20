@@ -127,7 +127,7 @@ export function Options() {
             {i18n('buttonImportRules')}
           </Button>
           <Button onClick={() => {
-            const json = JSON.stringify(config.rules ?? [], null, 2)
+            const json = JSON.stringify(config.rules, null, 2)
 
             chrome.downloads.download({
               url: jsonToDataURL(json)
@@ -141,7 +141,7 @@ export function Options() {
       </nav>
 
       <ul className='py-2 px-4'>
-        {(config.rules ?? []).map((rule, i) => {
+        {config.rules.map((rule, i) => {
           return (
             <li key={rule.id} className='space-y-2 border-b py-2 last:border-b-0'>
               <div className='flex justify-between'>

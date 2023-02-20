@@ -9,7 +9,7 @@ export interface IBackgroundAPI {
 }
 
 export interface IStorage {
-  [StorageItemKey.Config]?: IConfigStore
+  [StorageItemKey.Config]: IConfigStore
 }
 
 export interface IFontList {
@@ -18,7 +18,7 @@ export interface IFontList {
 }
 
 export interface IConfigStore {
-  rules?: IRule[]
+  rules: IRule[]
 }
 
 export enum FontType {

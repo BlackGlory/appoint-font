@@ -189,5 +189,76 @@ export async function migrate(previousVersion: string): Promise<void> {
       const oldStorage = new LocalStorage<IOldStorage>()
       await oldStorage.removeItem(StorageItemKey.FontList)
     })
+  , createMigration('2023.0.1 || 2023.0.2', '2023.0.3', async () => {
+      enum StorageItemKey {
+        Config = 'config'
+      }
+
+      interface IOldStorage {
+        [StorageItemKey.Config]?: IOldConfigStore
+      }
+
+      interface INewStorage {
+        [StorageItemKey.Config]: INewConfigStore
+      }
+
+      interface IOldConfigStore {
+        rules?: IRule[]
+      }
+
+      interface INewConfigStore {
+        rules: IRule[]
+      }
+
+      interface IRule {
+        id: string
+        enabled: boolean
+        fontType: FontType
+        fontFamily: string
+
+        matchers: Matcher[]
+        matchersEnabled: boolean
+
+        fontWeight: string
+        fontWeightEnabled: boolean
+
+        unicodeRange: string
+        unicodeRangeEnabled: boolean
+      }
+
+      type Matcher =
+      | IURLMatcher
+      | IHostMatcher
+
+      interface IURLMatcher {
+        type: MatchType.URL
+        pattern: string
+      }
+
+      interface IHostMatcher {
+        type: MatchType.Host
+        pattern: string
+      }
+
+      enum FontType {
+        Standard
+      , FixedWidth
+      }
+
+      enum MatchType {
+        URL
+      , Host
+      }
+
+      // Make sure storage is initialized
+      const oldStorage = new LocalStorage<IOldStorage>()
+      const newStorage = new LocalStorage<INewStorage>()
+
+      const config = await oldStorage.getItem(StorageItemKey.Config)
+      await newStorage.setItem(
+        StorageItemKey.Config
+      , { rules: config?.rules ?? [] }
+      )
+    })
   )
 }

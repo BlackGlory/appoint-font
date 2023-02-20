@@ -10,14 +10,17 @@ import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
 import { generateFontLists } from '@utils/font-list'
 import { all } from 'extra-promise'
-import { getConfig, setConfig } from './storage'
+import { getConfig, setConfig, initStorage } from './storage'
 
 chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
   switch (reason) {
     case 'install': {
       // 在安装后打开设置页面.
+      await initStorage()
+
       const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
       await chrome.tabs.create({ url: optionsPageURL })
+
       break
     }
     case 'update': {
@@ -35,7 +38,7 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
     fontList: getFontList()
   , config: getConfig()
   })
-  const filteredRules = (config.rules ?? [])
+  const filteredRules = config.rules
     .filter(x => x.enabled)
     .filter(x => {
       if (x.matchersEnabled) {
@@ -81,7 +84,7 @@ async function convertRuleToCSS(
 , fontList: IFontList
 ): Promise<string | undefined> {
   const allFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.all.map(x => x.fontId) ?? []
+    ...fontList.all.map(x => x.fontId)
   , GenericFontFamily.Serif
   , GenericFontFamily.SansSerif
   , GenericFontFamily.Monospace
@@ -97,7 +100,7 @@ async function convertRuleToCSS(
   , GenericFontFamily.Fangsong
   ]))
   const monospaceFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.monospace.map(x => x.fontId) ?? []
+    ...fontList.monospace.map(x => x.fontId)
   , GenericFontFamily.Monospace
   , GenericFontFamily.UIMonospace
   ]))

@@ -10,7 +10,9 @@ export function useConfig(client: DelightRPC.ClientProxy<IBackgroundAPI>): [
   config: IConfigStore
 , setConfig: Updater<IConfigStore>
 ] {
-  const [config, setConfig] = useState<IConfigStore>({})
+  const [config, setConfig] = useState<IConfigStore>({
+    rules: []
+  })
 
   useMount(() => {
     go(async () => {
