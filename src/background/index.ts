@@ -1,4 +1,4 @@
-import { isntUndefined } from '@blackglory/prelude'
+import { go, isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import { IBackgroundAPI, IFontList, IRule, FontType } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
@@ -8,15 +8,14 @@ import { dedent } from 'extra-tags'
 import * as Iter from 'iterable-operator'
 import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
-import { generateFontLists } from '@utils/font-list'
 import { all } from 'extra-promise'
-import { getConfig, setConfig, initStorage } from './storage'
+import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
 
 chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
   switch (reason) {
     case 'install': {
       // 在安装后打开设置页面.
-      await initStorage()
+      await initLocalStorage()
 
       const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
       await chrome.tabs.create({ url: optionsPageURL })
@@ -68,16 +67,13 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   )
 })
 
-createServer<IBackgroundAPI>({
-  getConfig
-, setConfig
-, getFontList
+go(async () => {
+  createServer<IBackgroundAPI>({
+    getConfig
+  , setConfig
+  , getFontList
+  })
 })
-
-async function getFontList(): Promise<IFontList> {
-  const fontLists = await generateFontLists()
-  return fontLists
-}
 
 async function convertRuleToCSS(
   rule: IRule
