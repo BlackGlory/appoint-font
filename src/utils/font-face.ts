@@ -19,13 +19,13 @@ export function createFontFaceRule(
     : ''
 
   const fontSource = localFonts
-    .map(font => `local(${ font })`)
+    .map(font => `local("${font}")`) // 添加引号以防止字体名中带有`(`, `)`这样可能破坏CSS解析器的字符
     .join(', ')
 
   return dedent`
     @font-face {
-      font-family: ${ fontFamily };
-      src: ${ fontSource };
+      font-family: "${fontFamily}";
+      src: ${fontSource};
       font-synthesis: none;
       ${fontWeightDescriptor}
       ${unicodeRangeDescriptor}
