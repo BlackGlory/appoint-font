@@ -7,8 +7,10 @@ The easiest font setting extension.
 
 ## Supported browsers and platforms
 - [x] [Chrome]
+- [x] [Edge]
 
 [Chrome]: https://chrome.google.com/webstore/detail/lmjdabbpgabigbonekfpjhfgjekpnkge
+[Edge]: https://microsoftedge.microsoft.com/addons/detail/dclbmfdeofbiogggabbggfochlhcmppa
 
 ## FAQ
 ### How does it work?
