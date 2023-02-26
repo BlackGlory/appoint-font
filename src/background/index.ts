@@ -10,27 +10,7 @@ import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
 import { all } from 'extra-promise'
 import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
-
-chrome.runtime.onInstalled.addListener(async ({ reason, previousVersion }) => {
-  switch (reason) {
-    case 'install': {
-      // 在安装后打开设置页面.
-      await initLocalStorage()
-
-      const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
-      await chrome.tabs.create({ url: optionsPageURL })
-
-      break
-    }
-    case 'update': {
-      // 在升级后执行迁移.
-      if (previousVersion) {
-        await migrate(previousVersion)
-      }
-      break
-    }
-  }
-})
+import { waitForLaunch, LaunchReason } from 'extra-webextension'
 
 chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   const { fontList, config } = await all({
@@ -67,7 +47,26 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   )
 })
 
-go(async () => {
+waitForLaunch().then(async details => {
+  console.info(`Launched by ${LaunchReason[details.reason]}`)
+
+  switch (details.reason) {
+    case LaunchReason.Install: {
+      // 在安装后打开设置页面.
+      await initLocalStorage()
+
+      const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
+      await chrome.tabs.create({ url: optionsPageURL })
+
+      break
+    }
+    case LaunchReason.Update: {
+      // 在升级后执行迁移.
+      await migrate(details.previousVersion)
+      break
+    }
+  }
+
   createServer<IBackgroundAPI>({
     getConfig
   , setConfig
