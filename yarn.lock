@@ -3401,6 +3401,11 @@ react-dom@^18.2.0:
     loose-envify "^1.1.0"
     scheduler "^0.23.0"
 
+react-loading-icons@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-loading-icons/-/react-loading-icons-1.1.0.tgz#c37f2472936ab93c6a7f43c0a2c2fe8efc3ff7c8"
+  integrity sha512-Y9eZ6HAufmUd8DIQd6rFrx5Bt/oDlTM9Nsjvf8YpajTa3dI8cLNU8jUN5z7KTANU+Yd6/KJuBjxVlrU2dMw33g==
+
 react@^18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"

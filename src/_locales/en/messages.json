@@ -59,4 +59,7 @@
 , "alertInvalidRuleFile": {
     "message": "Invalid rule file"
   }
+, "iconLoading": {
+    "message": "Loading..."
+  }
 }

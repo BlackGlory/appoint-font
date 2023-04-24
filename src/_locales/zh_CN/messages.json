@@ -59,4 +59,7 @@
 , "alertInvalidRuleFile": {
     "message": "无效的规则文件"
   }
+, "iconLoading": {
+    "message": "载入中..."
+  }
 }
