@@ -34,7 +34,7 @@ export function MatcherOptions({
 
       <ul className='space-y-2'>
         {rule.matchers.map((matcher, i) => (
-          <li className='space-y-0.5'>
+          <li key={i} className='space-y-0.5'>
             <div className='flex items-center space-x-2'>
               <label>{i18n('buttonConditionType')}</label>
 
