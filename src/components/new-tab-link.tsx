@@ -1,4 +1,10 @@
-export function NewTabLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
+export function NewTabLink(
+  props: Omit<
+    React.ComponentPropsWithoutRef<'a'>
+  , | 'target'
+    | 'className'
+  >
+) {
   return (
     <a
       {...props}
