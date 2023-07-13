@@ -4,11 +4,12 @@ import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
 interface IExpandableProps {
   label: string
   children: React.ReactNode
+  defaultOpen: boolean
 }
 
-export function Expandable({ label, children }: IExpandableProps) {
+export function Collapsible({ label, children, defaultOpen }: IExpandableProps) {
   return (
-    <Disclosure defaultOpen={false}>
+    <Disclosure defaultOpen={defaultOpen}>
       <Disclosure.Button>
         {({ open }) => (
           <div className='w-full flex items-center cursor-pointer'>

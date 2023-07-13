@@ -1,6 +1,6 @@
 import { IConfigStore, IRule } from '@src/contract'
 import { Checkbox } from '@components/checkbox'
-import { Expandable } from '@components/expandable'
+import { Collapsible } from '@components/collapsible'
 import { Updater } from 'use-immer'
 import { NewTabLink } from '@components/new-tab-link'
 import { TextInput } from '@components/text-input'
@@ -17,7 +17,7 @@ interface IAdvancedOptionsProps {
 export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptionsProps) {
   return (
     <div className='bg-gray-100 p-1'>
-      <Expandable label={i18n('labelAdvancedOptions')}>
+      <Collapsible label={i18n('labelAdvancedOptions')} defaultOpen={false}>
         <div className='space-y-2 p-1'>
           <section>
             <Checkbox
@@ -75,7 +75,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
             />
           </section>
         </div>
-      </Expandable>
+      </Collapsible>
     </div>
   )
 }
