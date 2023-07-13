@@ -10,16 +10,16 @@ interface ICollapsibleProps {
 export function Collapsible({ label, children, defaultOpen }: ICollapsibleProps) {
   return (
     <Disclosure defaultOpen={defaultOpen}>
-      <Disclosure.Button>
+      <Disclosure.Button className='w-full flex items-center cursor-pointer'>
         {({ open }) => (
-          <div className='w-full flex items-center cursor-pointer'>
+          <>
             {
               open
               ? <ChevronDownIcon className='w-4 h-4' />
               : <ChevronRightIcon className='w-4 h-4'/>
             }
             <span>{label}</span>
-          </div>
+          </>
         )}
         
       </Disclosure.Button>
