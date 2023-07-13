@@ -1,6 +1,5 @@
-import { useToggle } from 'extra-react-hooks'
+import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
-import classNames from 'classnames'
 
 interface IExpandableProps {
   label: string
@@ -8,24 +7,24 @@ interface IExpandableProps {
 }
 
 export function Expandable({ label, children }: IExpandableProps) {
-  const [expanded, toggleExpanded] = useToggle(false)
-
   return (
-    <div>
-      <div
-        className='w-full flex items-center cursor-pointer'
-        onClick={toggleExpanded}
-      >
-        {
-          expanded
-          ? <ChevronDownIcon className='w-4 h-4' />
-          : <ChevronRightIcon className='w-4 h-4'/>
-        }
-        <span>{label}</span>
-      </div>
-      <div className={classNames(!expanded && 'hidden')}>
+    <Disclosure defaultOpen={false}>
+      <Disclosure.Button>
+        {({ open }) => (
+          <div className='w-full flex items-center cursor-pointer'>
+            {
+              open
+              ? <ChevronDownIcon className='w-4 h-4' />
+              : <ChevronRightIcon className='w-4 h-4'/>
+            }
+            <span>{label}</span>
+          </div>
+        )}
+        
+      </Disclosure.Button>
+      <Disclosure.Panel>
         {children}
-      </div>
-    </div>
+      </Disclosure.Panel>
+    </Disclosure>
   )
 }
