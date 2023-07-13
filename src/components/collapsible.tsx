@@ -1,13 +1,13 @@
 import { Disclosure } from '@headlessui/react'
 import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/24/solid'
 
-interface IExpandableProps {
+interface ICollapsibleProps {
   label: string
   children: React.ReactNode
   defaultOpen: boolean
 }
 
-export function Collapsible({ label, children, defaultOpen }: IExpandableProps) {
+export function Collapsible({ label, children, defaultOpen }: ICollapsibleProps) {
   return (
     <Disclosure defaultOpen={defaultOpen}>
       <Disclosure.Button>
