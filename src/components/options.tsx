@@ -11,7 +11,6 @@ import { UpButton } from '@components/up-button'
 import { DownButton } from '@components/down-button'
 import { Switch } from '@components/switch'
 import { AdvancedOptions } from '@components/advanced-options'
-import { useConfig } from '@hooks/use-config'
 import { i18n } from '@utils/i18n'
 import { Base64 } from 'js-base64'
 import { isRuleArray } from '@utils/validator'
@@ -19,6 +18,8 @@ import { Modal } from '@components/modal'
 import { useImmer } from 'use-immer'
 import { compareStringsAscending } from 'extra-sort'
 import LoadingIcons from 'react-loading-icons'
+import { ConfigStoreContext } from '@utils/config-store'
+import { useSelector, useUpdater } from 'extra-react-store'
 
 interface IModal {
   isOpen: boolean
@@ -26,11 +27,12 @@ interface IModal {
 }
 
 export function Options() {
+  const rules = useSelector(ConfigStoreContext, state => state.rules)
+  const updateConfig = useUpdater(ConfigStoreContext)
   const client = useMemo(() => createBackgroundClient<IBackgroundAPI>(), [])
   const [loading, setLoading] = useState<boolean>(true)
   const [allFontList, setAllFontList] = useState<chrome.fontSettings.FontName[]>([])
   const [monospaceFontList, setMonospaceFontList] = useState<chrome.fontSettings.FontName[]>([])
-  const [config, setConfig] = useConfig(client)
   const [modal, setModal] = useImmer<IModal>({
     isOpen: false
   , message: ''
@@ -66,7 +68,7 @@ export function Options() {
 
               <nav className='bg-gray-50 px-4 py-2 border-y sticky top-0 flex justify-between'>
                 <div className='space-x-2'>
-                  <Button onClick={() => setConfig(config => {
+                  <Button onClick={() => updateConfig(config => {
                     if (!config.rules) {
                       config.rules = []
                     }
@@ -92,7 +94,7 @@ export function Options() {
                 </div>
 
                 <div className='space-x-2'>
-                  <Button onClick={() => setConfig(config => {
+                  <Button onClick={() => updateConfig(config => {
                     config.rules = []
                   })}>
                     {i18n('buttonClearRules')}
@@ -109,7 +111,7 @@ export function Options() {
                         assert(isRuleArray(json), 'Invalid rule file')
 
                         const newRules = json
-                        setConfig(config => {
+                        updateConfig(config => {
                           for (const newRule of newRules) {
                             const index = config.rules?.findIndex(rule => {
                               return newRule.id === rule.id
@@ -138,7 +140,7 @@ export function Options() {
                     {i18n('buttonImportRules')}
                   </Button>
                   <Button onClick={() => {
-                    const json = JSON.stringify(config.rules, null, 2)
+                    const json = JSON.stringify(rules, null, 2)
 
                     chrome.downloads.download({
                       url: jsonToDataURL(json)
@@ -152,7 +154,7 @@ export function Options() {
               </nav>
 
               <ul className='py-2 px-4'>
-                {config.rules.map((rule, i) => (
+                {rules.map((rule, i) => (
                   <li key={rule.id} className='space-y-2 border-b py-2 last:border-b-0'>
                     <div className='flex justify-between'>
                       <div className='space-y-2'>
@@ -171,7 +173,7 @@ export function Options() {
                               }
                             ]}
                             value={rule.fontType}
-                            onChange={fontType => setConfig(config => {
+                            onChange={fontType => updateConfig(config => {
                               config.rules![i].fontType = fontType
                             })}
                           />
@@ -193,7 +195,7 @@ export function Options() {
                                 .sort((a, b) => compareStringsAscending(a.name, b.name))
                             }
                             value={rule.fontFamily}
-                            onChange={fontFamily => setConfig(config => {
+                            onChange={fontFamily => updateConfig(config => {
                               config.rules![i].fontFamily = fontFamily
                             })}
                           />
@@ -201,11 +203,11 @@ export function Options() {
                       </div>
 
                       <aside className='space-x-2'>
-                        <RemoveButton onClick={() => setConfig(config => {
+                        <RemoveButton onClick={() => updateConfig(config => {
                           config.rules!.splice(i, 1)
                         })} />
                         <UpButton
-                          onClick={() => setConfig(config => {
+                          onClick={() => updateConfig(config => {
                             const rules = config.rules!
                             const previousRule = rules[i - 1]
                             if (previousRule) {
@@ -215,7 +217,7 @@ export function Options() {
                           })}
                         />
                         <DownButton
-                          onClick={() => setConfig(config => {
+                          onClick={() => updateConfig(config => {
                             const rules = config.rules!
                             const nextRule = rules[i + 1]
                             if (nextRule) {
@@ -226,7 +228,7 @@ export function Options() {
                         />
                         <Switch
                           value={rule.enabled}
-                          onClick={value => setConfig(config => {
+                          onClick={value => updateConfig(config => {
                             config.rules![i].enabled = value
                           })}
                         />
@@ -236,7 +238,6 @@ export function Options() {
                     <AdvancedOptions
                       rule={rule}
                       ruleIndex={i}
-                      setConfig={setConfig}
                     />
                   </li>
                 ))}

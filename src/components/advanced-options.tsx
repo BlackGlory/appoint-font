@@ -1,20 +1,21 @@
-import { IConfigStore, IRule } from '@src/contract'
+import { IRule } from '@src/contract'
 import { Checkbox } from '@components/checkbox'
 import { Collapsible } from '@components/collapsible'
-import { Updater } from 'use-immer'
 import { NewTabLink } from '@components/new-tab-link'
 import { TextInput } from '@components/text-input'
 import { MatcherOptions } from '@components/matcher-options'
 import { i18n } from '@utils/i18n'
+import { ConfigStoreContext } from '@utils/config-store'
+import { useUpdater } from 'extra-react-store'
 
 interface IAdvancedOptionsProps {
   rule: IRule
   ruleIndex: number
-
-  setConfig: Updater<IConfigStore>
 }
 
-export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptionsProps) {
+export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
+  const updateConfig = useUpdater(ConfigStoreContext)
+
   return (
     <div className='bg-gray-100 p-1'>
       <Collapsible label={i18n('labelAdvancedOptions')} defaultOpen={false}>
@@ -22,7 +23,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
           <section>
             <Checkbox
               value={rule.matchersEnabled}
-              onClick={enabled => setConfig(config => {
+              onClick={enabled => updateConfig(config => {
                 config.rules![ruleIndex].matchersEnabled = enabled
               })}
             >
@@ -32,15 +33,13 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
             <MatcherOptions
               rule={rule}
               ruleIndex={ruleIndex}
-
-              setConfig={setConfig}
             />
           </section>
 
           <section>
             <Checkbox
               value={rule.fontWeightEnabled}
-              onClick={enabled => setConfig(config => {
+              onClick={enabled => updateConfig(config => {
                 config.rules![ruleIndex].fontWeightEnabled = enabled
               })}
             >
@@ -50,7 +49,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
             <TextInput
               disabled={!rule.fontWeightEnabled}
               value={rule.fontWeight}
-              onChange={e => setConfig(config => {
+              onChange={e => updateConfig(config => {
                 config.rules![ruleIndex].fontWeight = e.target.value
               })}
             />
@@ -59,7 +58,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
           <section>
             <Checkbox
               value={rule.unicodeRangeEnabled}
-              onClick={enabled => setConfig(config => {
+              onClick={enabled => updateConfig(config => {
                 config.rules![ruleIndex].unicodeRangeEnabled = enabled
               })}
             >
@@ -69,7 +68,7 @@ export function AdvancedOptions({ setConfig, rule, ruleIndex }: IAdvancedOptions
             <TextInput
               disabled={!rule.unicodeRangeEnabled}
               value={rule.unicodeRange}
-              onChange={e => setConfig(config => {
+              onChange={e => updateConfig(config => {
                 config.rules![ruleIndex].unicodeRange = e.target.value
               })}
             />

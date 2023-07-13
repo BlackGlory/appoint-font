@@ -1,28 +1,25 @@
-import { IConfigStore, IRule, MatchType } from '@src/contract'
-import { Updater } from 'use-immer'
+import { IRule, MatchType } from '@src/contract'
 import { Select } from '@components/select'
 import { Button } from '@components/button'
 import { RemoveButton } from '@components/remove-button'
 import { TextInput } from '@components/text-input'
 import { i18n } from '@utils/i18n'
+import { ConfigStoreContext } from '@utils/config-store'
+import { useUpdater } from 'extra-react-store'
 
 interface IMatcherOptionsProps {
   rule: IRule
   ruleIndex: number
-
-  setConfig: Updater<IConfigStore>
 }
 
-export function MatcherOptions({
-  setConfig
-, rule
-, ruleIndex
-}: IMatcherOptionsProps) {
+export function MatcherOptions({ rule, ruleIndex }: IMatcherOptionsProps) {
+  const updateConfig = useUpdater(ConfigStoreContext)
+
   return (
     <div className='space-y-2'>
       <Button
         className='w-full'
-        onClick={() => setConfig(config => {
+        onClick={() => updateConfig(config => {
           config.rules![ruleIndex].matchers.push({
             type: MatchType.Host
           , pattern: ''
@@ -44,12 +41,12 @@ export function MatcherOptions({
                 , { name: i18n('selectMatchURL'), value: MatchType.URL }
                 ]}
                 value={matcher.type}
-                onChange={type => setConfig(config => {
+                onChange={type => updateConfig(config => {
                   config.rules![ruleIndex].matchers[i].type = type
                 })}
               />
 
-              <RemoveButton onClick={() => setConfig(config => {
+              <RemoveButton onClick={() => updateConfig(config => {
                 config.rules![ruleIndex].matchers.splice(i, 1)
               })} />
             </div>
@@ -57,7 +54,7 @@ export function MatcherOptions({
             <div className='flex'>
               <TextInput
                 value={matcher.pattern}
-                onChange={e => setConfig(config => {
+                onChange={e => updateConfig(config => {
                   config.rules![ruleIndex].matchers[i].pattern = e.target.value
                 })}
               />

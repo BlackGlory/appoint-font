@@ -60,12 +60,13 @@
     "extra-lazy": "^2.0.1",
     "extra-promise": "^6.0.6",
     "extra-react-hooks": "^0.5.2",
+    "extra-react-store": "^0.1.0",
     "extra-semver": "^0.2.1",
     "extra-sort": "^0.1.1",
     "extra-tags": "^0.4.1",
     "extra-utils": "^5.2.0",
     "extra-webextension": "^0.3.1",
-    "immer": "^9.0.19",
+    "immer": "^10.0.2",
     "iterable-operator": "^4.0.6",
     "js-base64": "^3.7.5",
     "micromatch": "^4.0.5",
@@ -74,7 +75,7 @@
     "react-dom": "^18.2.0",
     "react-loading-icons": "^1.1.0",
     "semver": "^7.3.8",
-    "use-immer": "^0.8.1",
+    "use-immer": "^0.9.0",
     "webextension-polyfill": "^0.10.0"
   }
 }
