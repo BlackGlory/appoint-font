@@ -27,7 +27,7 @@ interface IModal {
 }
 
 export function Options() {
-  const rules = useSelector(ConfigStoreContext, state => state.rules)
+  const rules = useSelector(ConfigStoreContext, config => config.rules)
   const updateConfig = useUpdater(ConfigStoreContext)
   const client = useMemo(() => createBackgroundClient<IBackgroundAPI>(), [])
   const [loading, setLoading] = useState<boolean>(true)
