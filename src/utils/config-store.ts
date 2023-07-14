@@ -11,7 +11,7 @@ export class ConfigStore extends Store<IConfigStore> {
 
     go(async () => {
       const config = await this.client.getConfig()
-      this.setState(config)
+      super.setState(config)
     })
   }
 
