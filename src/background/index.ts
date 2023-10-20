@@ -8,9 +8,11 @@ import { dedent } from 'extra-tags'
 import * as Iter from 'iterable-operator'
 import { pipe } from 'extra-utils'
 import { migrate } from './migrate'
-import { all } from 'extra-promise'
+import { all, Deferred } from 'extra-promise'
+import { applyPropertyDecorators } from 'extra-proxy'
 import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
 import { waitForLaunch, LaunchReason } from 'extra-webextension'
+import { ImplementationOf } from 'delight-rpc'
 
 chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   const { fontList, config } = await all({
@@ -47,6 +49,30 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
   )
 })
 
+const launched = new Deferred<void>()
+
+const api: ImplementationOf<IBackgroundAPI> = {
+  getConfig
+, setConfig
+, getFontList
+}
+
+// 确保尽早启动服务器, 以免拒绝来自客户端的连接, 造成功能失效.
+createServer<IBackgroundAPI>(
+  applyPropertyDecorators(
+    api
+  , Object.keys(api) as Array<keyof IBackgroundAPI>
+  , (fn: (...args: unknown[]) => unknown) => {
+      return async function (...args: unknown[]): Promise<unknown> {
+        // 等待初始化/迁移执行完毕
+        await launched
+
+        return await fn(...args)
+      }
+    }
+  ) as ImplementationOf<IBackgroundAPI>
+)
+
 waitForLaunch().then(async details => {
   console.info(`Launched by ${LaunchReason[details.reason]}`)
 
@@ -67,11 +93,7 @@ waitForLaunch().then(async details => {
     }
   }
 
-  createServer<IBackgroundAPI>({
-    getConfig
-  , setConfig
-  , getFontList
-  })
+  launched.resolve()
 })
 
 async function convertRuleToCSS(
