@@ -1,5 +1,5 @@
 import { isArray, isBoolean, isObject, isString } from '@blackglory/prelude'
-import { inEnum } from 'extra-utils'
+import { inEnum, isNumber } from 'extra-utils'
 import { IRule, FontType, Matcher, MatchType } from '@src/contract'
 
 export function isRuleArray(val: unknown): val is IRule[] {
