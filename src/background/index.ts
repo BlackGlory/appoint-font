@@ -1,4 +1,4 @@
-import { go, isntUndefined } from '@blackglory/prelude'
+import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import { IBackgroundAPI, IFontList, IRule, FontType } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
