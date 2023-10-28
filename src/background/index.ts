@@ -14,41 +14,6 @@ import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
 import { waitForLaunch, LaunchReason } from 'extra-webextension'
 import { ImplementationOf } from 'delight-rpc'
 
-chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
-  const { fontList, config } = await all({
-    fontList: getFontList()
-  , config: getConfig()
-  })
-  const filteredRules = config.rules
-    .filter(x => x.enabled)
-    .filter(x => {
-      if (x.matchersEnabled) {
-        return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
-      } else {
-        return true
-      }
-    })
-
-  const css: string = await pipe(
-    filteredRules
-  , iter => Iter.mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
-  , iter => Iter.filterAsync(iter, isntUndefined)
-  , Iter.toArrayAsync
-  , async values => (await values).join('\n')
-  )
-  console.log({ url, css })
-
-  await chrome.scripting.insertCSS(
-    {
-      target: {
-        tabId: tabId
-      , allFrames: true
-      }
-    , css
-    }
-  )
-})
-
 const launched = new Deferred<void>()
 
 const api: ImplementationOf<IBackgroundAPI> = {
@@ -94,6 +59,41 @@ waitForLaunch().then(async details => {
   }
 
   launched.resolve()
+})
+
+chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
+  const { fontList, config } = await all({
+    fontList: getFontList()
+  , config: getConfig()
+  })
+  const filteredRules = config.rules
+    .filter(x => x.enabled)
+    .filter(x => {
+      if (x.matchersEnabled) {
+        return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
+      } else {
+        return true
+      }
+    })
+
+  const css: string = await pipe(
+    filteredRules
+  , iter => Iter.mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
+  , iter => Iter.filterAsync(iter, isntUndefined)
+  , Iter.toArrayAsync
+  , async values => (await values).join('\n')
+  )
+  console.log({ url, css })
+
+  await chrome.scripting.insertCSS(
+    {
+      target: {
+        tabId: tabId
+      , allFrames: true
+      }
+    , css
+    }
+  )
 })
 
 async function convertRuleToCSS(
