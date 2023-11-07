@@ -46,8 +46,7 @@ waitForLaunch().then(async details => {
       // 在安装后打开设置页面.
       await initLocalStorage()
 
-      const optionsPageURL = 'chrome://extensions/?options=' + chrome.runtime.id
-      await chrome.tabs.create({ url: optionsPageURL })
+      await chrome.runtime.openOptionsPage()
 
       break
     }

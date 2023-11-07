@@ -18,9 +18,9 @@
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
-    "@types/chrome": "^0.0.212",
-    "@types/micromatch": "^4.0.2",
-    "@types/offscreencanvas": "^2019.7.0",
+    "@types/chrome": "^0.0.250",
+    "@types/micromatch": "^4.0.4",
+    "@types/offscreencanvas": "^2019.7.2",
     "@types/react": "^18.0.27",
     "@types/react-dom": "^18.0.10",
     "@types/webextension-polyfill": "^0.10.0",
