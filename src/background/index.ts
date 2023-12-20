@@ -61,12 +61,6 @@ waitForLaunch().then(async details => {
 })
 
 chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
-  const disallowedURLPatterns: RegExp[] = [
-    /^chrome:/
-  , /^chrome-extension:/
-  ]
-  if (disallowedURLPatterns.some(pattern => pattern.test(url))) return
-
   const { fontList, config } = await all({
     fontList: getFontList()
   , config: getConfig()
