@@ -14,16 +14,16 @@ import { AdvancedOptions } from '@components/advanced-options'
 import { i18n } from '@utils/i18n'
 import { Base64 } from 'js-base64'
 import { isRuleArray } from '@utils/validator'
-import { Modal } from '@components/modal'
+import { MessageBox } from '@components/message-box'
 import { useImmer } from 'use-immer'
 import { compareStringsAscending } from 'extra-sort'
 import LoadingIcons from 'react-loading-icons'
 import { ConfigStoreContext } from '@utils/config-store'
 import { useSelector, useUpdater } from 'extra-react-store'
 
-interface IModal {
+interface IMessageBoxState {
   isOpen: boolean
-  message: string
+  content: React.ReactNode
 }
 
 export function Options() {
@@ -33,9 +33,9 @@ export function Options() {
   const [loading, setLoading] = useState<boolean>(true)
   const [allFontList, setAllFontList] = useState<chrome.fontSettings.FontName[]>([])
   const [monospaceFontList, setMonospaceFontList] = useState<chrome.fontSettings.FontName[]>([])
-  const [modal, setModal] = useImmer<IModal>({
+  const [messageBox, setMessageBox] = useImmer<IMessageBoxState>({
     isOpen: false
-  , message: ''
+  , content: null
   })
 
   useMountAsync(async () => {
@@ -58,13 +58,14 @@ export function Options() {
           )
         : (
             <>
-              <Modal
-                message={modal.message}
-                isOpen={modal.isOpen}
-                onClose={() => setModal(modal => {
+              <MessageBox
+                isOpen={messageBox.isOpen}
+                onClose={() => setMessageBox(modal => {
                   modal.isOpen = false
                 })}
-              />
+              >
+                {messageBox.content}
+              </MessageBox>
 
               <nav className='bg-gray-50 px-4 py-2 border-y sticky top-0 flex justify-between'>
                 <div className='space-x-2'>
@@ -129,9 +130,9 @@ export function Options() {
                         })
                       } catch (e) {
                         console.warn(e)
-                        setModal({
+                        setMessageBox({
                           isOpen: true
-                        , message: i18n('alertInvalidRuleFile')
+                        , content: i18n('alertInvalidRuleFile')
                         })
                       }
                     }, { once: true })
