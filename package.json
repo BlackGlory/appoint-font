@@ -59,7 +59,7 @@
     "extra-lazy": "^2.0.2",
     "extra-promise": "^6.0.8",
     "extra-proxy": "^0.4.1",
-    "extra-react-hooks": "^0.6.5",
+    "extra-react-hooks": "^0.6.6",
     "extra-react-store": "^0.1.6",
     "extra-semver": "^0.2.2",
     "extra-sort": "^0.1.2",
