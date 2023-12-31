@@ -229,7 +229,7 @@ export function Options() {
                         />
                         <Switch
                           value={rule.enabled}
-                          onClick={value => updateConfig(config => {
+                          onChange={value => updateConfig(config => {
                             config.rules![i].enabled = value
                           })}
                         />
