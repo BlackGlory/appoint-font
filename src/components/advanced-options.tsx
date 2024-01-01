@@ -23,7 +23,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
           <section>
             <Checkbox
               value={rule.matchersEnabled}
-              onClick={enabled => updateConfig(config => {
+              onChange={enabled => updateConfig(config => {
                 config.rules![ruleIndex].matchersEnabled = enabled
               })}
             >
@@ -39,7 +39,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
           <section>
             <Checkbox
               value={rule.fontWeightEnabled}
-              onClick={enabled => updateConfig(config => {
+              onChange={enabled => updateConfig(config => {
                 config.rules![ruleIndex].fontWeightEnabled = enabled
               })}
             >
@@ -58,7 +58,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
           <section>
             <Checkbox
               value={rule.unicodeRangeEnabled}
-              onClick={enabled => updateConfig(config => {
+              onChange={enabled => updateConfig(config => {
                 config.rules![ruleIndex].unicodeRangeEnabled = enabled
               })}
             >
