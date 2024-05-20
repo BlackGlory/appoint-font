@@ -5,6 +5,9 @@
 , "extensionDescription": {
     "message": "最简单的字体设置扩展程序。"
   }
+, "extensionActionTitle": {
+    "message": "钦定字体选项"
+  }
 , "labelAdvancedOptions": {
     "message": "高级选项"
   }

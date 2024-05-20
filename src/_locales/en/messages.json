@@ -5,6 +5,9 @@
 , "extensionDescription": {
     "message": "The easiest font setting extension."
   }
+, "extensionActionTitle": {
+    "message": "Appoint Font Options"
+  }
 , "labelAdvancedOptions": {
     "message": "Advanced Options"
   }

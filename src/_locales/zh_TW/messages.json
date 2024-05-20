@@ -5,6 +5,9 @@
 , "extensionDescription": {
     "message": "最簡單的字體設置擴展程序。"
   }
+, "extensionActionTitle": {
+    "message": "欽定字體選項"
+  }
 , "labelAdvancedOptions": {
     "message": "高級選項"
   }
