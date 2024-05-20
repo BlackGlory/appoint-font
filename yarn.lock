@@ -2250,10 +2250,10 @@ extra-react-hooks@^0.6.6:
     extra-fsm "^0.2.1"
     rxjs "^7.8.1"
 
-extra-react-store@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/extra-react-store/-/extra-react-store-0.1.6.tgz#5d49d946cabd716694c112c3074baee413283c6d"
-  integrity sha512-8SxSOdhs/G2OQF5VUOfKK0VodQGnAz6CkSNG7TEwHoixiaOFux8/ma37R1WDPn7C2XZKeWcy6Ovcly9fd08AeQ==
+extra-react-store@^0.1.8:
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/extra-react-store/-/extra-react-store-0.1.8.tgz#270fc41ba92d118e04df57dc58cdfe4344c20872"
+  integrity sha512-DWgy+iwutol998ZeiqK2abvMjPKY6bEUNoClTEAMlWfjaB6TUR81rvjNAk/cS6JbumlsAHfMaYGvUO3kxlqfZA==
   dependencies:
     "@blackglory/prelude" "^0.3.3"
     "@blackglory/structures" "^0.13.4"
