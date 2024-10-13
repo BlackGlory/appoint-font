@@ -1,4 +1,3 @@
-import { toArray } from '@blackglory/prelude'
 import { getBrowserFontList } from '@utils/font-settings'
 
 /**
@@ -21,26 +20,16 @@ export enum GenericFontFamily {
 }
 
 export async function getFontFamilyAliases(fontFamily: string): Promise<string[]> {
-  const aliases = new Set<string>()
-
-  getFontFamilyAliasesFromPredefinedTables(fontFamily)
-    .forEach(alias => aliases.add(alias))
-
-  ;(await getBrowserFontFamilyAliases(fontFamily))
-    .forEach(alias => aliases.add(alias))
-
-  return toArray(aliases)
+  return [
+    ...getFontFamilyAliasesFromPredefinedTables(fontFamily)
+  , ...await getBrowserFontFamilyAliases(fontFamily)
+  ]
 }
 
 /**
- * 从浏览器API处查找fontFamily的别名, **结果可能包含重复项**.
- * 
- * @returns 返回包括fontFamily自己在内的别名数组.
- * 例如, 在参数为`微软雅黑`的情况下, 视运行环境而定, 此函数可能会返回`微软雅黑`和`Microsoft YaHei`.
+ * 从浏览器API处查找fontFamily的别名.
  */
-async function getBrowserFontFamilyAliases(
-  fontFamily: string
-): Promise<string[]> {
+async function getBrowserFontFamilyAliases(fontFamily: string): Promise<string[]> {
   const fontList = await getBrowserFontList()
   const fontName = fontList
     .find(({ displayName, fontId }) => {
@@ -51,15 +40,12 @@ async function getBrowserFontFamilyAliases(
   if (fontName) {
     return [fontName.displayName, fontName.fontId]
   } else {
-    return [fontFamily]
+    return []
   }
 }
 
 /**
- * 从预定义的别名表里查找fontFamily的别名, **结果可能包含重复项**.
- * 
- * @returns 返回包括fontFamily自己在内的别名数组.
- * 例如, 在参数为`微软雅黑`的情况下, 视运行环境而定, 此函数可能会返回`微软雅黑`和`Microsoft YaHei`.
+ * 从预定义的别名表里查找fontFamily的别名.
  */
 function getFontFamilyAliasesFromPredefinedTables(fontFamily: string): string[] {
   const fontFamilyAliasTable = [

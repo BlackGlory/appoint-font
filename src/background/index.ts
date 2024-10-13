@@ -123,19 +123,27 @@ async function convertRuleToCSS(
 
   if (rule.fontFamily) {
     const results: string[] = []
-    for (const fontFamily of allFontList) {
+    for (const font of allFontList) {
       if (
         (
-          !monospaceFontList.includes(fontFamily) &&
+          !monospaceFontList.includes(font) &&
           rule.fontType === FontType.Standard
         ) || (
-          monospaceFontList.includes(fontFamily) &&
+          monospaceFontList.includes(font) &&
           rule.fontType === FontType.FixedWidth
         )
       ) {
-        for (const fontFamilyAlias of await getFontFamilyAliases(fontFamily)) {
+        for (
+          const fontFamily of Iter.uniq([
+            font
+          , ...await getFontFamilyAliases(font)
+          ])
+        ) {
           const localFonts = await go(async () => {
-            let localFonts = await getFontFamilyAliases(rule.fontFamily)
+            let localFonts = Iter.toArray(Iter.uniq([
+              rule.fontFamily
+            , ...await getFontFamilyAliases(rule.fontFamily)
+            ]))
 
             if (rule.subFontFamilyEnabled) {
               localFonts = [
@@ -149,7 +157,7 @@ async function convertRuleToCSS(
 
           results.push(
             createFontFaceRule(
-              fontFamilyAlias
+              fontFamily
             , localFonts
             , {
                 fontWeight: rule.fontWeightEnabled ? rule.fontWeight : undefined
