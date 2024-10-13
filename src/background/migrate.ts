@@ -260,7 +260,7 @@ export async function migrate(previousVersion: string): Promise<void> {
       , { rules: config?.rules ?? [] }
       )
     })
-  , createMigration('^2023.0.3 <=2024.0.0', '2024.1.0', async () => {
+  , createMigration('>=2023.0.3 <2024.1.0', '2024.1.0', async () => {
       enum LocalStorageItemKey {
         Config = 'config'
       }
@@ -340,7 +340,6 @@ export async function migrate(previousVersion: string): Promise<void> {
         pattern: string
       }
 
-      // Make sure storage is initialized
       const oldStorage = new LocalStorage<IOldLocalStorage>()
       const newStorage = new LocalStorage<INewLocalStorage>()
 
