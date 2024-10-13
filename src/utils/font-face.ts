@@ -26,7 +26,6 @@ export function createFontFaceRule(
     @font-face {
       font-family: "${fontFamily}";
       src: ${fontSource};
-      font-synthesis: none;
       ${fontWeightDescriptor}
       ${unicodeRangeDescriptor}
     }
