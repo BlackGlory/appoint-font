@@ -147,7 +147,8 @@ async function convertRuleToCSS(
 
             if (rule.subFontFamilyEnabled) {
               localFonts = [
-                ...localFonts.map(x => `${x} ${rule.subFontFamily}`)
+                ...localFonts.map(x => `${x} ${rule.subFontFamily.trim()}`)
+              , ...localFonts.map(x => `${x}-${rule.subFontFamily.trim()}`)
               , ...localFonts
               ]
             }
