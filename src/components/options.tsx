@@ -117,12 +117,12 @@ export function Options() {
                         const newRules = json
                         updateConfig(config => {
                           for (const newRule of newRules) {
-                            const index = config.rules?.findIndex(rule => {
+                            const index = config.rules.findIndex(rule => {
                               return newRule.id === rule.id
                             })
 
                             if (isntUndefined(index) && index >= 0) {
-                              config.rules![index] = newRule
+                              config.rules[index] = newRule
                             } else {
                               if (!config.rules) {
                                 config.rules = []
@@ -178,7 +178,7 @@ export function Options() {
                             ]}
                             value={rule.fontType}
                             onChange={fontType => updateConfig(config => {
-                              config.rules![i].fontType = fontType
+                              config.rules[i].fontType = fontType
                             })}
                           />
                         </section>
@@ -200,7 +200,7 @@ export function Options() {
                             }
                             value={rule.fontFamily}
                             onChange={fontFamily => updateConfig(config => {
-                              config.rules![i].fontFamily = fontFamily
+                              config.rules[i].fontFamily = fontFamily
                             })}
                           />
                         </section>
@@ -208,11 +208,11 @@ export function Options() {
 
                       <aside className='space-x-2'>
                         <RemoveButton onClick={() => updateConfig(config => {
-                          config.rules!.splice(i, 1)
+                          config.rules.splice(i, 1)
                         })} />
                         <UpButton
                           onClick={() => updateConfig(config => {
-                            const rules = config.rules!
+                            const rules = config.rules
                             const previousRule = rules[i - 1]
                             if (previousRule) {
                               rules[i] = previousRule
@@ -222,7 +222,7 @@ export function Options() {
                         />
                         <DownButton
                           onClick={() => updateConfig(config => {
-                            const rules = config.rules!
+                            const rules = config.rules
                             const nextRule = rules[i + 1]
                             if (nextRule) {
                               rules[i] = nextRule
@@ -233,7 +233,7 @@ export function Options() {
                         <Switch
                           value={rule.enabled}
                           onChange={value => updateConfig(config => {
-                            config.rules![i].enabled = value
+                            config.rules[i].enabled = value
                           })}
                         />
                       </aside>
