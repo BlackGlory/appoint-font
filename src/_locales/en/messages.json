@@ -12,7 +12,7 @@
     "message": "Advanced Options"
   }
 , "labelSubFont": {
-    "message": "Sub-font"
+    "message": "Use sub-font"
   }
 , "labelLimitCustomFontPrefix": {
     "message": "Limit custom fonts "

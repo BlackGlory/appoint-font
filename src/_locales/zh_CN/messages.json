@@ -12,7 +12,7 @@
     "message": "高级选项"
   }
 , "labelSubFont": {
-    "message": "子字体"
+    "message": "使用子字体"
   }
 , "labelLimitCustomFontPrefix": {
     "message": "限制自定义字体的"
