@@ -45,14 +45,17 @@ export interface IRule {
   fontType: FontType
   fontFamily: string
 
-  matchers: Matcher[]
   matchersEnabled: boolean
+  matchers: Matcher[]
 
-  fontWeight: string
+  subFontFamilyEnabled: boolean
+  subFontFamily: string
+
   fontWeightEnabled: boolean
+  fontWeight: string
 
-  unicodeRange: string
   unicodeRangeEnabled: boolean
+  unicodeRange: string
 }
 
 export type Matcher =

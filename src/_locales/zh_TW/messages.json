@@ -11,6 +11,9 @@
 , "labelAdvancedOptions": {
     "message": "高級選項"
   }
+, "labelSubFont": {
+    "message": "子字體"
+  }
 , "labelLimitCustomFontPrefix": {
     "message": "限制自定義字體的"
   }

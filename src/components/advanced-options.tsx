@@ -24,7 +24,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
             <Checkbox
               value={rule.matchersEnabled}
               onChange={enabled => updateConfig(config => {
-                config.rules![ruleIndex].matchersEnabled = enabled
+                config.rules[ruleIndex].matchersEnabled = enabled
               })}
             >
               {i18n('labelMatchers')}
@@ -38,9 +38,28 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
 
           <section>
             <Checkbox
+              value={rule.subFontFamilyEnabled}
+              onChange={enabled => updateConfig(config => {
+                config.rules[ruleIndex].subFontFamilyEnabled = enabled
+              })}
+            >
+              {i18n('labelSubFont')}
+            </Checkbox>
+
+            <TextInput
+              disabled={!rule.subFontFamilyEnabled}
+              value={rule.subFontFamily}
+              onChange={e => updateConfig(config => {
+                config.rules[ruleIndex].subFontFamily = e.target.value
+              })}
+            />
+          </section>
+
+          <section>
+            <Checkbox
               value={rule.fontWeightEnabled}
               onChange={enabled => updateConfig(config => {
-                config.rules![ruleIndex].fontWeightEnabled = enabled
+                config.rules[ruleIndex].fontWeightEnabled = enabled
               })}
             >
               {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/font-weight'>{i18n('labelFontWeight')}</NewTabLink>
@@ -50,7 +69,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
               disabled={!rule.fontWeightEnabled}
               value={rule.fontWeight}
               onChange={e => updateConfig(config => {
-                config.rules![ruleIndex].fontWeight = e.target.value
+                config.rules[ruleIndex].fontWeight = e.target.value
               })}
             />
           </section>
@@ -59,7 +78,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
             <Checkbox
               value={rule.unicodeRangeEnabled}
               onChange={enabled => updateConfig(config => {
-                config.rules![ruleIndex].unicodeRangeEnabled = enabled
+                config.rules[ruleIndex].unicodeRangeEnabled = enabled
               })}
             >
               {i18n('labelLimitCustomFontPrefix')}<NewTabLink href='https://developer.mozilla.org/en-US/docs/Web/CSS/@font-face/unicode-range'>{i18n('labelUnicodeRange')}</NewTabLink>
@@ -69,7 +88,7 @@ export function AdvancedOptions({ rule, ruleIndex }: IAdvancedOptionsProps) {
               disabled={!rule.unicodeRangeEnabled}
               value={rule.unicodeRange}
               onChange={e => updateConfig(config => {
-                config.rules![ruleIndex].unicodeRange = e.target.value
+                config.rules[ruleIndex].unicodeRange = e.target.value
               })}
             />
           </section>

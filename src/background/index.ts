@@ -1,4 +1,4 @@
-import { isntUndefined } from '@blackglory/prelude'
+import { go, isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import { IBackgroundAPI, IFontList, IRule, FontType } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
@@ -134,14 +134,29 @@ async function convertRuleToCSS(
         )
       ) {
         for (const fontFamilyAlias of await getFontFamilyAliases(fontFamily)) {
-          results.push(createFontFaceRule(
-            fontFamilyAlias
-          , await getFontFamilyAliases(rule.fontFamily)
-          , {
-              fontWeight: rule.fontWeightEnabled ? rule.fontWeight : undefined
-            , unicodeRange: rule.unicodeRangeEnabled ? rule.unicodeRange : undefined
+          const localFonts = await go(async () => {
+            let localFonts = await getFontFamilyAliases(rule.fontFamily)
+
+            if (rule.subFontFamilyEnabled) {
+              localFonts = [
+                ...localFonts.map(x => `${x} ${rule.subFontFamily}`)
+              , ...localFonts
+              ]
             }
-          ))
+
+            return localFonts
+          })
+
+          results.push(
+            createFontFaceRule(
+              fontFamilyAlias
+            , localFonts
+            , {
+                fontWeight: rule.fontWeightEnabled ? rule.fontWeight : undefined
+              , unicodeRange: rule.unicodeRangeEnabled ? rule.unicodeRange : undefined
+              }
+            )
+          )
         }
       }
     }

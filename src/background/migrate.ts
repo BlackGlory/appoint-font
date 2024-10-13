@@ -260,5 +260,103 @@ export async function migrate(previousVersion: string): Promise<void> {
       , { rules: config?.rules ?? [] }
       )
     })
+  , createMigration('^2023.0.3 <=2024.0.0', '2024.1.0', async () => {
+      enum LocalStorageItemKey {
+        Config = 'config'
+      }
+
+      interface IOldLocalStorage {
+        [LocalStorageItemKey.Config]: IOldConfigStore
+      }
+
+      interface INewLocalStorage {
+        [LocalStorageItemKey.Config]: INewConfigStore
+      }
+
+      interface IOldConfigStore {
+        rules: IOldRule[]
+      }
+
+      interface INewConfigStore {
+        rules: INewRule[]
+      }
+
+      interface IOldRule {
+        id: string
+        enabled: boolean
+        fontType: FontType
+        fontFamily: string
+
+        matchers: Matcher[]
+        matchersEnabled: boolean
+
+        fontWeight: string
+        fontWeightEnabled: boolean
+
+        unicodeRange: string
+        unicodeRangeEnabled: boolean
+      }
+
+      interface INewRule {
+        id: string
+        enabled: boolean
+        fontType: FontType
+        fontFamily: string
+
+        matchersEnabled: boolean
+        matchers: Matcher[]
+
+        subFontFamilyEnabled: boolean
+        subFontFamily: string
+
+        fontWeightEnabled: boolean
+        fontWeight: string
+
+        unicodeRangeEnabled: boolean
+        unicodeRange: string
+      }
+
+      enum FontType {
+        Standard
+      , FixedWidth
+      }
+
+      enum MatchType {
+        URL
+      , Host
+      }
+
+      type Matcher =
+      | IURLMatcher
+      | IHostMatcher
+
+      interface IURLMatcher {
+        type: MatchType.URL
+        pattern: string
+      }
+
+      interface IHostMatcher {
+        type: MatchType.Host
+        pattern: string
+      }
+
+      // Make sure storage is initialized
+      const oldStorage = new LocalStorage<IOldLocalStorage>()
+      const newStorage = new LocalStorage<INewLocalStorage>()
+
+      const config = await oldStorage.getItem(LocalStorageItemKey.Config)
+      await newStorage.setItem(
+        LocalStorageItemKey.Config
+      , {
+          rules: config.rules.map(rule => {
+            return {
+              ...rule
+            , subFontFamilyEnabled: false
+            , subFontFamily: ''
+            }
+          })
+        }
+      )
+    })
   )
 }

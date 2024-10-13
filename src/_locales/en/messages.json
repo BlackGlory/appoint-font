@@ -11,6 +11,9 @@
 , "labelAdvancedOptions": {
     "message": "Advanced Options"
   }
+, "labelSubFont": {
+    "message": "Sub-font"
+  }
 , "labelLimitCustomFontPrefix": {
     "message": "Limit custom fonts "
   }

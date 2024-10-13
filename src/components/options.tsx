@@ -83,6 +83,9 @@ export function Options() {
                     , matchersEnabled: false
                     , matchers: []
 
+                    , subFontFamilyEnabled: false
+                    , subFontFamily: ''
+
                     , fontWeightEnabled: false
                     , fontWeight: ''
 
