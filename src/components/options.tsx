@@ -20,6 +20,7 @@ import { compareStringsAscending } from 'extra-sort'
 import LoadingIcons from 'react-loading-icons'
 import { ConfigStoreContext } from '@utils/config-store'
 import { useSelector, useUpdater } from 'extra-react-store'
+import { openFiles } from 'extra-blob'
 
 interface IMessageBoxState {
   isOpen: boolean
@@ -103,43 +104,45 @@ export function Options() {
                   })}>
                     {i18n('buttonClearRules')}
                   </Button>
-                  <Button onClick={() => {
-                    const input = document.createElement('input')
-                    input.type = 'file'
-                    input.accept = '.json,application/json'
-                    input.addEventListener('change', async () => {
-                      try {
-                        const text = await input.files?.item(0)?.text()
+                  <Button onClick={async () => {
+                    try {
+                      const newRules = await go(async () => {
+                        const files = await openFiles({
+                          accept: ['.json', 'application/json']
+                        })
+
+                        const text = await files.item(0)?.text()
                         assert(isntUndefined(text), 'The text is undefined')
+
                         const json = JSON.parse(text)
                         assert(isRuleArray(json), 'Invalid rule file')
 
-                        const newRules = json
-                        updateConfig(config => {
-                          for (const newRule of newRules) {
-                            const index = config.rules.findIndex(rule => {
-                              return newRule.id === rule.id
-                            })
+                        return json
+                      })
 
-                            if (isntUndefined(index) && index >= 0) {
-                              config.rules[index] = newRule
-                            } else {
-                              if (!config.rules) {
-                                config.rules = []
-                              }
-                              config.rules.push(newRule)
+                      updateConfig(config => {
+                        for (const newRule of newRules) {
+                          const index = config.rules.findIndex(rule => {
+                            return newRule.id === rule.id
+                          })
+
+                          if (isntUndefined(index) && index >= 0) {
+                            config.rules[index] = newRule
+                          } else {
+                            if (!config.rules) {
+                              config.rules = []
                             }
+                            config.rules.push(newRule)
                           }
-                        })
-                      } catch (e) {
-                        console.warn(e)
-                        setMessageBox({
-                          isOpen: true
-                        , content: i18n('alertInvalidRuleFile')
-                        })
-                      }
-                    }, { once: true })
-                    input.click()
+                        }
+                      })
+                    } catch (e) {
+                      console.warn(e)
+                      setMessageBox({
+                        isOpen: true
+                      , content: i18n('alertInvalidRuleFile')
+                      })
+                    }
                   }}>
                     {i18n('buttonImportRules')}
                   </Button>
