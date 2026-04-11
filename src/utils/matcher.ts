@@ -1,15 +1,12 @@
 import { isMatch } from 'micromatch'
 import { MatchType, Matcher } from '@src/contract'
+import { assertNever } from 'assert-never'
 
 export function matchRuleMatcher(url: string, matcher: Matcher): boolean {
   switch (matcher.type) {
-    case MatchType.URL: {
-      return matchURLPattern(url, matcher.pattern)
-    }
-    case MatchType.Host: {
-      return matchHostPattern(url, matcher.pattern)
-    }
-    default: throw new Error('Unexpected route')
+    case MatchType.URL: return matchURLPattern(url, matcher.pattern)
+    case MatchType.Host: return matchHostPattern(url, matcher.pattern)
+    default: assertNever(matcher, 'Unexpected route')
   }
 }
 

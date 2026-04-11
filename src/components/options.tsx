@@ -21,6 +21,7 @@ import LoadingIcons from 'react-loading-icons'
 import { ConfigStoreContext } from '@utils/config-store'
 import { useSelector, useUpdater } from 'extra-react-store'
 import { openFiles } from 'extra-blob'
+import { assertNever } from 'assert-never'
 
 interface IMessageBoxState {
   isOpen: boolean
@@ -195,7 +196,7 @@ export function Options() {
                                 switch (rule.fontType) {
                                   case FontType.Standard: return allFontList
                                   case FontType.FixedWidth: return monospaceFontList
-                                  default: throw new Error('Unexpected route')
+                                  default: assertNever(rule.fontType, 'Unexpected route')
                                 }
                               })
                                 .map(x => ({ name: x.displayName, value: x.fontId }))

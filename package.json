@@ -54,6 +54,7 @@
     "@delight-rpc/webextension": "^0.3.0",
     "@headlessui/react": "^1.7.17",
     "@heroicons/react": "^2.1.1",
+    "assert-never": "^1.4.0",
     "classnames": "^2.3.2",
     "delight-rpc": "^6.1.2",
     "extra-blob": "^0.2.0",
