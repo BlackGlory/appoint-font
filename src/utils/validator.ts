@@ -1,5 +1,5 @@
-import { isArray, isBoolean, isObject, isString } from '@blackglory/prelude'
-import { inEnum, isNumber } from 'extra-utils'
+import { isArray, isBoolean, isPlainObject, isString } from '@blackglory/prelude'
+import { inEnum } from 'extra-utils'
 import { IRule, FontType, Matcher, MatchType } from '@src/contract'
 
 export function isRuleArray(val: unknown): val is IRule[] {
@@ -8,21 +8,27 @@ export function isRuleArray(val: unknown): val is IRule[] {
 }
 
 function isRule(val: unknown): val is IRule {
-  return isObject(val)
+  return isPlainObject(val)
       && ('id' in val && isString(val.id))
       && ('enabled' in val && isBoolean(val.enabled))
       && ('fontType' in val && inEnum(val.fontType, FontType))
       && ('fontFamily' in val && isString(val.fontFamily))
-      && ('matchers' in val && isArray(val.matchers) && val.matchers.every(isMatcher))
+
       && ('matchersEnabled' in val && isBoolean(val.matchersEnabled))
-      && ('fontWeight' in val && isString(val.fontWeight))
+      && ('matchers' in val && isArray(val.matchers) && val.matchers.every(isMatcher))
+
+      && ('subFontFamilyEnabled' in val && isBoolean(val.subFontFamilyEnabled))
+      && ('subFontFamily' in val && isString(val.subFontFamily))
+
       && ('fontWeightEnabled' in val && isBoolean(val.fontWeightEnabled))
-      && ('unicodeRange' in val && isString(val.unicodeRange))
+      && ('fontWeight' in val && isString(val.fontWeight))
+
       && ('unicodeRangeEnabled' in val && isBoolean(val.unicodeRangeEnabled))
+      && ('unicodeRange' in val && isString(val.unicodeRange))
 }
 
 function isMatcher(val: unknown): val is Matcher {
-  return isObject(val)
+  return isPlainObject(val)
       && ('type' in val && inEnum(val.type, MatchType))
       && ('pattern' in val && isString(val.pattern))
 }
