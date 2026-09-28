@@ -16,13 +16,13 @@ export function Collapsible({ label, children, defaultOpen }: ICollapsibleProps)
             {
               open
               ? <ChevronDownIcon className='w-4 h-4' />
-              : <ChevronRightIcon className='w-4 h-4'/>
+              : <ChevronRightIcon className='w-4 h-4' />
             }
             <span>{label}</span>
           </>
         )}
-        
       </Disclosure.Button>
+
       <Disclosure.Panel>
         {children}
       </Disclosure.Panel>
