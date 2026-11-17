@@ -1,6 +1,5 @@
 import { LocalStorage, SessionStorage } from 'extra-webextension'
 import { reusePendingPromises } from 'extra-promise'
-import { toArray } from '@blackglory/prelude'
 
 export class StorageWithMemoryCache<Storage extends Record<string, unknown>> {
   private keyToValue = new Map<
@@ -48,8 +47,9 @@ export class StorageWithMemoryCache<Storage extends Record<string, unknown>> {
   )
 
   clear: () => Promise<void> = reusePendingPromises(async (): Promise<void> => {
-    const keys = toArray(this.keyToValue.keys())
-    keys.forEach(key => this.keyToValue.set(key, undefined))
+    for (const key of this.keyToValue.keys()) {
+      this.keyToValue.set(key, undefined)
+    }
 
     await this.storage.clear()
   })
