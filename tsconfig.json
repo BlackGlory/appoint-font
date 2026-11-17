@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "ES2018"
+    "target": "ES2020"
   , "module": "ES2015"
   , "moduleResolution": "Node"
   , "jsx": "react-jsx"
@@ -11,10 +11,10 @@
   , "noUnusedParameters": false
   , "baseUrl": "."
   , "paths": {
-      "@src/*": ["src/*"]
-    , "@components/*": ["src/components/*"]
+      "@components/*": ["src/components/*"]
     , "@hooks/*": ["src/hooks/*"]
     , "@utils/*": ["src/utils/*"]
+    , "@src/*": ["src/*"]
     }
   }
 , "include": [

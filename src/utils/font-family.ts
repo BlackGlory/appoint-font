@@ -1,3 +1,5 @@
+import { go } from '@blackglory/prelude'
+import { lazyAsyncFunction } from 'extra-lazy'
 import { getBrowserFontList } from '@utils/font-settings'
 
 /**
@@ -21,62 +23,67 @@ export enum GenericFontFamily {
 
 export async function getFontFamilyAliases(fontFamily: string): Promise<string[]> {
   return [
-    ...getFontFamilyAliasesFromPredefinedTables(fontFamily)
-  , ...await getBrowserFontFamilyAliases(fontFamily)
+    ...getFontFamilyAliasesFromCommonFontAliasPairs(fontFamily)
+  , ...await getFontFamilyAliasesFromBrowserFontList(fontFamily)
   ]
 }
 
 /**
  * 从浏览器API处查找fontFamily的别名.
  */
-async function getBrowserFontFamilyAliases(fontFamily: string): Promise<string[]> {
+const getFontFamilyAliasesFromBrowserFontList: (
+  fontFamily: string
+) => Promise<string[]> = lazyAsyncFunction(async () => {
   const fontList = await getBrowserFontList()
-  const fontName = fontList
-    .find(({ displayName, fontId }) => {
-      return displayName === fontFamily
-          || fontId === fontFamily
-    })
 
-  if (fontName) {
-    return [fontName.displayName, fontName.fontId]
-  } else {
-    return []
-  }
-}
+  const fontFamilyToFontAliases: Map<string, string[]> = new Map(
+    fontList.flatMap(font => {
+      const fontAliases = [font.displayName, font.fontId]
+
+      return fontAliases.map(fontFamily => [fontFamily, fontAliases])
+    })
+  )
+
+  return fontFamily => fontFamilyToFontAliases.get(fontFamily) ?? []
+})
 
 /**
- * 从预定义的别名表里查找fontFamily的别名.
+ * 从硬编码的常见字体别名里查找fontFamily的别名.
  */
-function getFontFamilyAliasesFromPredefinedTables(fontFamily: string): string[] {
-  const fontFamilyAliasTable = [
-    ['宋体', 'SimSun']
-  , ['黑体', 'SimHei']
-  , ['微软雅黑', 'Microsoft YaHei']
-  , ['微软正黑体', 'Microsoft JhengHei']
-  , ['新宋体', 'NSimSun']
-  , ['新细明体', 'PMingLiU']
-  , ['细明体', 'MingLiU']
-  , ['标楷体', 'DFKai-SB', 'BiauKai']
-  , ['仿宋', 'FangSong']
-  , ['楷体', 'KaiTi']
-  , ['仿宋_GB2312', 'FangSong_GB2312']
-  , ['楷体_GB2312', 'KaiTi_GB2312']
-  , ['华文细黑', 'STHeiti Light [STXihei]']
-  , ['华文黑体', 'STHeiti']
-  , ['华文楷体', 'STKaiti']
-  , ['华文宋体', 'STSong']
-  , ['华文仿宋', 'STFangsong']
-  , ['丽黑 Pro', 'LiHei Pro Medium']
-  , ['丽宋 Pro', 'LiSong Pro Light']
-  , ['苹果丽中黑', 'Apple LiGothic Medium']
-  , ['苹果丽细宋', 'Apple LiSung Light']
-  ]
+const getFontFamilyAliasesFromCommonFontAliasPairs: (
+  fontFamily: string
+) => string[] = go(
+  () => {
+    const commonFontAliasPairs = [
+      ['宋体', 'SimSun']
+    , ['黑体', 'SimHei']
+    , ['微软雅黑', 'Microsoft YaHei']
+    , ['微软正黑体', 'Microsoft JhengHei']
+    , ['新宋体', 'NSimSun']
+    , ['新细明体', 'PMingLiU']
+    , ['细明体', 'MingLiU']
+    , ['标楷体', 'DFKai-SB', 'BiauKai']
+    , ['仿宋', 'FangSong']
+    , ['楷体', 'KaiTi']
+    , ['仿宋_GB2312', 'FangSong_GB2312']
+    , ['楷体_GB2312', 'KaiTi_GB2312']
+    , ['华文细黑', 'STHeiti Light [STXihei]']
+    , ['华文黑体', 'STHeiti']
+    , ['华文楷体', 'STKaiti']
+    , ['华文宋体', 'STSong']
+    , ['华文仿宋', 'STFangsong']
+    , ['丽黑 Pro', 'LiHei Pro Medium']
+    , ['丽宋 Pro', 'LiSong Pro Light']
+    , ['苹果丽中黑', 'Apple LiGothic Medium']
+    , ['苹果丽细宋', 'Apple LiSung Light']
+    ]
 
-  const results: string[] = []
-  for (const fontFamilyAliasRow of fontFamilyAliasTable) {
-    if (fontFamilyAliasRow.includes(fontFamily)) {
-      fontFamilyAliasRow.forEach(x => results.push(x))
-    }
+    const fontFamilyToFontAliases: Map<string, string[]> = new Map(
+      commonFontAliasPairs.flatMap(fontAliasPair => {
+        return fontAliasPair.map(fontFamily => [fontFamily, fontAliasPair])
+      })
+    )
+
+    return fontFamily => fontFamilyToFontAliases.get(fontFamily) ?? []
   }
-  return results
-}
+)

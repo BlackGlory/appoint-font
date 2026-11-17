@@ -1,4 +1,4 @@
-import { lazy } from 'extra-lazy'
+import { lazy } from '@blackglory/prelude'
 
 /**
  * 取自`chrome.fontSettings.GenericFamily`
@@ -38,7 +38,7 @@ async function getBrowserGenericFamily(
   const { fontId } = await chrome.fontSettings.getFont({ genericFamily })
 
   const fontList = await getBrowserFontList()
-  const font = fontList.find(x => x.fontId === fontId)
+  const font = fontList.find(font => font.fontId === fontId)
 
   return font
 }

@@ -1,7 +1,6 @@
 import { IFontList } from '@src/contract'
-import { assert } from '@blackglory/prelude'
+import { assert, lazy } from '@blackglory/prelude'
 import { getBrowserFontList } from '@utils/font-settings'
-import { lazy } from 'extra-lazy'
 
 const getCanvasContext = lazy(() => {
   const ctx = new OffscreenCanvas(100, 100).getContext('2d')

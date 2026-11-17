@@ -10,9 +10,16 @@ import { assert } from '@blackglory/prelude'
 import { LocalStorage, SessionStorage } from 'extra-webextension'
 import { generateFontList } from '@utils/font-list'
 import { ToStruct } from 'hotypes'
+import { StorageWithMemoryCache } from '@utils/storage-with-memory-cache'
 
-const sessionStorage = new SessionStorage<ToStruct<ISessionStorage>>()
-const localStorage = new LocalStorage<ToStruct<ILocalStorage>>()
+// `chrome.storage`命名空间下的API性能很差, 一次读写操作的用时可能长达数十毫秒.
+// 为了加快速度, 在外面套一层内存缓存.
+const localStorage = new StorageWithMemoryCache(
+  new LocalStorage<ToStruct<ILocalStorage>>()
+)
+const sessionStorage = new StorageWithMemoryCache(
+  new SessionStorage<ToStruct<ISessionStorage>>()
+)
 
 export async function initLocalStorage(): Promise<void> {
   await localStorage.setItem(LocalStorageItemKey.Config, { rules: [] })

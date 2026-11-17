@@ -1,18 +1,16 @@
-import { go, isntUndefined } from '@blackglory/prelude'
+import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
-import { IBackgroundAPI, IFontList, IRule, FontType } from '@src/contract'
-import { createFontFaceRule } from '@utils/font-face'
-import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
+import { IBackgroundAPI } from '@src/contract'
 import { matchRuleMatcher } from '@utils/matcher'
-import { dedent } from 'extra-tags'
-import * as Iter from 'iterable-operator'
-import { pipe } from 'extra-utils'
+import { pipeAsync } from 'extra-utils'
 import { migrate } from './migrate'
 import { all, Deferred } from 'extra-promise'
 import { applyPropertyDecorators } from 'extra-proxy'
 import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
 import { waitForLaunch, LaunchReason } from 'extra-webextension'
 import { ImplementationOf } from 'delight-rpc'
+import { convertRuleToCSS } from '@utils/convert-rule-to-css'
+import { filterAsync, mapAsync, toArrayAsync } from 'iterable-operator'
 
 const launched = new Deferred<void>()
 
@@ -53,6 +51,7 @@ waitForLaunch().then(async details => {
     case LaunchReason.Update: {
       // 在升级后执行迁移.
       await migrate(details.previousVersion)
+
       break
     }
   }
@@ -65,113 +64,30 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
     fontList: getFontList()
   , config: getConfig()
   })
+
   const filteredRules = config.rules
-    .filter(x => x.enabled)
-    .filter(x => {
-      if (x.matchersEnabled) {
-        return x.matchers.some(matcher => matchRuleMatcher(url, matcher))
-      } else {
-        return true
-      }
+    .filter(rule => rule.enabled)
+    .filter(rule => {
+      return rule.matchersEnabled
+           ? rule.matchers.some(matcher => matchRuleMatcher(url, matcher))
+           : true
     })
 
-  const css: string = await pipe(
+  const css: string = await pipeAsync(
     filteredRules
-  , iter => Iter.mapAsync(iter, rule => convertRuleToCSS(rule, fontList))
-  , iter => Iter.filterAsync(iter, isntUndefined)
-  , Iter.toArrayAsync
-  , async values => (await values).join('\n')
+  , rules => mapAsync(rules, rule => convertRuleToCSS(rule, fontList))
+  , cssResults => filterAsync(cssResults, isntUndefined)
+  , toArrayAsync
+  , cssFragments => cssFragments.join('\n')
   )
-  console.log({ url, css })
 
   await chrome.scripting.insertCSS(
     {
       target: {
-        tabId: tabId
+        tabId
       , allFrames: true
       }
     , css
     }
   )
 })
-
-async function convertRuleToCSS(
-  rule: IRule
-, fontList: IFontList
-): Promise<string | undefined> {
-  const allFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.all.map(x => x.fontId)
-  , GenericFontFamily.Serif
-  , GenericFontFamily.SansSerif
-  , GenericFontFamily.Monospace
-  , GenericFontFamily.Cursive
-  , GenericFontFamily.Fantasy
-  , GenericFontFamily.SystemUI
-  , GenericFontFamily.UISerif
-  , GenericFontFamily.UISansSerif
-  , GenericFontFamily.UIMonospace
-  , GenericFontFamily.UIRounded
-  , GenericFontFamily.Emoji
-  , GenericFontFamily.Math
-  , GenericFontFamily.Fangsong
-  ]))
-  const monospaceFontList: string[] = Iter.toArray(Iter.uniq([
-    ...fontList.monospace.map(x => x.fontId)
-  , GenericFontFamily.Monospace
-  , GenericFontFamily.UIMonospace
-  ]))
-
-  if (rule.fontFamily) {
-    const results: string[] = []
-    for (const font of allFontList) {
-      if (
-        (
-          !monospaceFontList.includes(font) &&
-          rule.fontType === FontType.Standard
-        ) || (
-          monospaceFontList.includes(font) &&
-          rule.fontType === FontType.FixedWidth
-        )
-      ) {
-        for (
-          const fontFamily of Iter.uniq([
-            font
-          , ...await getFontFamilyAliases(font)
-          ])
-        ) {
-          const localFonts = await go(async () => {
-            let localFonts = Iter.toArray(Iter.uniq([
-              rule.fontFamily
-            , ...await getFontFamilyAliases(rule.fontFamily)
-            ]))
-
-            if (rule.subFontFamilyEnabled) {
-              localFonts = [
-                ...localFonts.map(x => `${x} ${rule.subFontFamily.trim()}`)
-              , ...localFonts.map(x => `${x}-${rule.subFontFamily.trim()}`)
-              , ...localFonts
-              ]
-            }
-
-            return localFonts
-          })
-
-          results.push(
-            createFontFaceRule(
-              fontFamily
-            , localFonts
-            , {
-                fontWeight: rule.fontWeightEnabled ? rule.fontWeight : undefined
-              , unicodeRange: rule.unicodeRangeEnabled ? rule.unicodeRange : undefined
-              }
-            )
-          )
-        }
-      }
-    }
-    return dedent`
-      // Rule ID: ${rule.id}
-      ${results.join('\n')}
-    `
-  }
-}

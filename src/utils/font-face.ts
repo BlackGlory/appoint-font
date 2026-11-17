@@ -1,8 +1,5 @@
 import { dedent } from 'extra-tags'
 
-/**
- * 创建CSS FontFace规则.
- */
 export function createFontFaceRule(
   fontFamily: string
 , localFonts: string[]
