@@ -31,7 +31,10 @@ interface IMessageBoxState {
 export function Options() {
   const rules = useSelector(ConfigStoreContext, config => config.rules)
   const updateConfig = useUpdater(ConfigStoreContext)
-  const client = useMemo(() => createBackgroundClient<IBackgroundAPI>(), [])
+  const client = useMemo(() => {
+    const [client] = createBackgroundClient<IBackgroundAPI>()
+    return client
+  }, [])
   const [loading, setLoading] = useState<boolean>(true)
   const [allFontList, setAllFontList] = useState<chrome.fontSettings.FontName[]>([])
   const [monospaceFontList, setMonospaceFontList] = useState<chrome.fontSettings.FontName[]>([])

@@ -6,11 +6,13 @@ import {
 , SessionStorageItemKey
 , IFontList
 } from '@src/contract'
+import { assert } from '@blackglory/prelude'
 import { LocalStorage, SessionStorage } from 'extra-webextension'
 import { generateFontList } from '@utils/font-list'
+import { ToStruct } from 'hotypes'
 
-const sessionStorage = new SessionStorage<ISessionStorage>()
-const localStorage = new LocalStorage<ILocalStorage>()
+const sessionStorage = new SessionStorage<ToStruct<ISessionStorage>>()
+const localStorage = new LocalStorage<ToStruct<ILocalStorage>>()
 
 export async function initLocalStorage(): Promise<void> {
   await localStorage.setItem(LocalStorageItemKey.Config, { rules: [] })
@@ -22,7 +24,11 @@ export async function setConfig(config: IConfigStore): Promise<null> {
 }
 
 export async function getConfig(): Promise<IConfigStore> {
-  return await localStorage.getItem(LocalStorageItemKey.Config)
+  const config = await localStorage.getItem(LocalStorageItemKey.Config)
+  // 扩展程序在启动后会执行迁移步骤, 在此之前请求都是挂起的, 因此config在调用时应该总是存在.
+  assert(config)
+
+  return config
 }
 
 export async function getFontList(): Promise<IFontList> {

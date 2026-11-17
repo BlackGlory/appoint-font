@@ -4,6 +4,7 @@ import { assert } from '@blackglory/prelude'
 import { nanoid } from 'nanoid'
 import semver from 'semver'
 import { LocalStorage } from 'extra-webextension'
+import { ToStruct } from 'hotypes'
 
 export async function migrate(previousVersion: string): Promise<void> {
   // 强制将不规范的版本号转换为semver
@@ -84,8 +85,8 @@ export async function migrate(previousVersion: string): Promise<void> {
         pattern: string
       }
 
-      const oldStorage = new LocalStorage<IOldStorage>()
-      const newStorage = new LocalStorage<INewStorage>()
+      const oldStorage = new LocalStorage<ToStruct<IOldStorage>>()
+      const newStorage = new LocalStorage<ToStruct<INewStorage>>()
       const oldConfig = await oldStorage.getItem(StorageItemKey.Config)
       const newConfig: INewStorage[StorageItemKey.Config]  = {
         rules: []
@@ -186,7 +187,7 @@ export async function migrate(previousVersion: string): Promise<void> {
         monospace?: string[]
       }
 
-      const oldStorage = new LocalStorage<IOldStorage>()
+      const oldStorage = new LocalStorage<ToStruct<IOldStorage>>()
       await oldStorage.removeItem(StorageItemKey.FontList)
     })
   , createMigration('2023.0.1 || 2023.0.2', '2023.0.3', async () => {
@@ -251,8 +252,8 @@ export async function migrate(previousVersion: string): Promise<void> {
       }
 
       // Make sure storage is initialized
-      const oldStorage = new LocalStorage<IOldStorage>()
-      const newStorage = new LocalStorage<INewStorage>()
+      const oldStorage = new LocalStorage<ToStruct<IOldStorage>>()
+      const newStorage = new LocalStorage<ToStruct<INewStorage>>()
 
       const config = await oldStorage.getItem(StorageItemKey.Config)
       await newStorage.setItem(
@@ -340,22 +341,24 @@ export async function migrate(previousVersion: string): Promise<void> {
         pattern: string
       }
 
-      const oldStorage = new LocalStorage<IOldLocalStorage>()
-      const newStorage = new LocalStorage<INewLocalStorage>()
+      const oldStorage = new LocalStorage<ToStruct<IOldLocalStorage>>()
+      const newStorage = new LocalStorage<ToStruct<INewLocalStorage>>()
 
       const config = await oldStorage.getItem(LocalStorageItemKey.Config)
-      await newStorage.setItem(
-        LocalStorageItemKey.Config
-      , {
-          rules: config.rules.map(rule => {
-            return {
-              ...rule
-            , subFontFamilyEnabled: false
-            , subFontFamily: ''
-            }
-          })
-        }
-      )
+      if (config) {
+        await newStorage.setItem(
+          LocalStorageItemKey.Config
+        , {
+            rules: config.rules.map(rule => {
+              return {
+                ...rule
+              , subFontFamilyEnabled: false
+              , subFontFamily: ''
+              }
+            })
+          }
+        )
+      }
     })
   )
 }

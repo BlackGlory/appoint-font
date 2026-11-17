@@ -4,7 +4,10 @@ import { IBackgroundAPI, IConfigStore } from '@src/contract'
 import { Store, createStoreContext } from 'extra-react-store'
 
 export class ConfigStore extends Store<IConfigStore> {
-  private client = createBackgroundClient<IBackgroundAPI>()
+  private client = go(() => {
+    const [client] = createBackgroundClient<IBackgroundAPI>()
+    return client
+  })
 
   constructor() {
     super({ rules: [] })
