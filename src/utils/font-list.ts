@@ -9,7 +9,7 @@ const getCanvasContext = lazy(() => {
   return ctx
 })
 
-export const generateFontList = lazy(async (): Promise<IFontList> => {
+export const getFontList = lazy(async (): Promise<IFontList> => {
   const browserFontNames = await getBrowserFontList()
   const monospaceFontList = browserFontNames
     .filter(fontName => isMonospace(fontName.fontId))

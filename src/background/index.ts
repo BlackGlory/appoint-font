@@ -1,16 +1,13 @@
-import { isntUndefined } from '@blackglory/prelude'
 import { createServer } from '@delight-rpc/webextension'
 import { IBackgroundAPI } from '@src/contract'
 import { matchRuleMatcher } from '@utils/matcher'
-import { pipeAsync } from 'extra-utils'
 import { migrate } from './migrate'
 import { all, Deferred } from 'extra-promise'
 import { applyPropertyDecorators } from 'extra-proxy'
-import { getConfig, setConfig, getFontList, initLocalStorage } from './storage'
+import { getConfig, setConfig, initLocalStorage } from './storage'
 import { waitForLaunch, LaunchReason } from 'extra-webextension'
 import { ImplementationOf } from 'delight-rpc'
-import { convertRuleToCSS } from '@utils/convert-rule-to-css'
-import { filterAsync, mapAsync, toArrayAsync } from 'iterable-operator'
+import { createCSS, getFontList } from './utils'
 
 const launched = new Deferred<void>()
 
@@ -73,13 +70,10 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
            : true
     })
 
-  const css: string = await pipeAsync(
-    filteredRules
-  , rules => mapAsync(rules, rule => convertRuleToCSS(rule, fontList))
-  , cssResults => filterAsync(cssResults, isntUndefined)
-  , toArrayAsync
-  , cssFragments => cssFragments.join('\n')
-  )
+  const css = await createCSS({
+    rules: filteredRules
+  , fontList
+  })
 
   await chrome.scripting.insertCSS(
     {

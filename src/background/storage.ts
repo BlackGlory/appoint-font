@@ -1,14 +1,6 @@
-import {
-  ILocalStorage
-, IConfigStore
-, LocalStorageItemKey
-, ISessionStorage
-, SessionStorageItemKey
-, IFontList
-} from '@src/contract'
+import { ILocalStorage, IConfigStore, LocalStorageItemKey } from '@src/contract'
 import { assert } from '@blackglory/prelude'
-import { LocalStorage, SessionStorage } from 'extra-webextension'
-import { generateFontList } from '@utils/font-list'
+import { LocalStorage } from 'extra-webextension'
 import { ToStruct } from 'hotypes'
 import { StorageWithMemoryCache } from '@utils/storage-with-memory-cache'
 
@@ -16,9 +8,6 @@ import { StorageWithMemoryCache } from '@utils/storage-with-memory-cache'
 // 为了加快速度, 在外面套一层内存缓存.
 const localStorage = new StorageWithMemoryCache(
   new LocalStorage<ToStruct<ILocalStorage>>()
-)
-const sessionStorage = new StorageWithMemoryCache(
-  new SessionStorage<ToStruct<ISessionStorage>>()
 )
 
 export async function initLocalStorage(): Promise<void> {
@@ -36,15 +25,4 @@ export async function getConfig(): Promise<IConfigStore> {
   assert(config)
 
   return config
-}
-
-export async function getFontList(): Promise<IFontList> {
-  const fontList = await sessionStorage.getItem(SessionStorageItemKey.FontList)
-  if (fontList) {
-    return fontList
-  } else {
-    const fontList = await generateFontList()
-    await sessionStorage.setItem(SessionStorageItemKey.FontList, fontList)
-    return fontList
-  }
 }
