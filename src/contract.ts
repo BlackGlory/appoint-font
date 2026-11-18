@@ -2,10 +2,6 @@ export enum LocalStorageItemKey {
   Config = 'config'
 }
 
-export enum SessionStorageItemKey {
-  FontList = 'fontList'
-}
-
 export interface IBackgroundAPI {
   setConfig(config: IConfigStore): null
   getConfig(): IConfigStore
@@ -14,10 +10,6 @@ export interface IBackgroundAPI {
 
 export interface ILocalStorage {
   [LocalStorageItemKey.Config]: IConfigStore
-}
-
-export interface ISessionStorage {
-  [SessionStorageItemKey.FontList]?: IFontList
 }
 
 export interface IFontList {

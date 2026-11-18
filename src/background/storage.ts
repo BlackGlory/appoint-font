@@ -4,8 +4,8 @@ import { LocalStorage } from 'extra-webextension'
 import { ToStruct } from 'hotypes'
 import { FastStorage } from '@utils/fast-storage'
 
-// `chrome.storage`命名空间下的API性能很差, 一次读写操作的用时可能长达数十毫秒.
 const localStorage = new FastStorage<ToStruct<ILocalStorage>>(
+  // `chrome.storage`命名空间下的API性能很差, 一次读写操作的用时可能长达数十毫秒.
   new LocalStorage<ToStruct<ILocalStorage>>()
 )
 
