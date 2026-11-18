@@ -3,11 +3,12 @@ import { isntUndefined, pipeAsync } from '@blackglory/prelude'
 import { SessionStorage } from 'extra-webextension'
 import { getFontList as _getFontList } from '@utils/font-list'
 import { ToStruct } from 'hotypes'
-import { StorageWithMemoryCache } from '@utils/storage-with-memory-cache'
+import { FastStorage } from '@utils/fast-storage'
 import { filterAsync, mapAsync, toArrayAsync } from 'iterable-operator'
 import { convertRuleToCSS } from '@utils/convert-rule-to-css'
 
-const sessionStorage = new StorageWithMemoryCache(
+// 据说`chrome.storage.session`保存在内存里, 但仍然慢得惊人.
+const sessionStorage = new FastStorage<ToStruct<ISessionStorage>>(
   new SessionStorage<ToStruct<ISessionStorage>>()
 )
 

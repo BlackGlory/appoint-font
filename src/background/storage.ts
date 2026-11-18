@@ -2,11 +2,10 @@ import { ILocalStorage, IConfigStore, LocalStorageItemKey } from '@src/contract'
 import { assert } from '@blackglory/prelude'
 import { LocalStorage } from 'extra-webextension'
 import { ToStruct } from 'hotypes'
-import { StorageWithMemoryCache } from '@utils/storage-with-memory-cache'
+import { FastStorage } from '@utils/fast-storage'
 
 // `chrome.storage`命名空间下的API性能很差, 一次读写操作的用时可能长达数十毫秒.
-// 为了加快速度, 在外面套一层内存缓存.
-const localStorage = new StorageWithMemoryCache(
+const localStorage = new FastStorage<ToStruct<ILocalStorage>>(
   new LocalStorage<ToStruct<ILocalStorage>>()
 )
 
