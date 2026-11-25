@@ -69,13 +69,17 @@ export async function convertRuleToCSS(
             if (rule.subFontFamilyEnabled) {
               const subFontFamily = rule.subFontFamily.trim()
 
-              return [
-                ...flatMap(localFonts, localFont => [
-                  `${localFont} ${subFontFamily}`
-                , `${localFont}-${subFontFamily}`
-                ])
-              , ...localFonts
-              ]
+              if (subFontFamily) {
+                return [
+                  ...flatMap(localFonts, localFont => [
+                    `${localFont} ${subFontFamily}`
+                  , `${localFont}-${subFontFamily}`
+                  ])
+                , ...localFonts
+                ]
+              } else {
+                return toArray(localFonts)
+              }
             } else {
               return toArray(localFonts)
             }
