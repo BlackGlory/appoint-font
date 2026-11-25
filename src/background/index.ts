@@ -8,6 +8,7 @@ import { getConfig, setConfig, initLocalStorage } from './storage'
 import { waitForLaunch, LaunchReason } from 'extra-webextension'
 import { ImplementationOf } from 'delight-rpc'
 import { createCSS, getFontList } from './utils'
+import { go } from '@blackglory/prelude'
 
 const launched = new Deferred<void>()
 
@@ -57,9 +58,13 @@ waitForLaunch().then(async details => {
 })
 
 chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
+
   const { fontList, config } = await all({
     fontList: getFontList()
-  , config: getConfig()
+  , config: go(async () => {
+      await launched
+      return await getConfig()
+    })
   })
 
   const filteredRules = config.rules
