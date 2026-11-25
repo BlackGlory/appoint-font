@@ -1,4 +1,4 @@
-import { go, toArray } from '@blackglory/prelude'
+import { go, lazy, toArray } from '@blackglory/prelude'
 import { IFontList, IRule, FontType } from '@src/contract'
 import { createFontFaceRule } from '@utils/font-face'
 import { getFontFamilyAliases, GenericFontFamily } from '@utils/font-family'
@@ -43,6 +43,24 @@ export async function convertRuleToCSS(
     , GenericFontFamily.UIMonospace
     ])
 
+    const getLocalFonts = lazy(async () => {
+      const ruleFontFamilyFonts = new Set([
+        rule.fontFamily
+      , ...await getFontFamilyAliases(rule.fontFamily)
+      ])
+      const ruleSubFontFamily = rule.subFontFamily.trim()
+
+      return rule.subFontFamilyEnabled && ruleSubFontFamily
+           ? [
+               ...flatMap(ruleFontFamilyFonts, ruleFontFamilyFont => [
+                 `${ruleFontFamilyFont} ${ruleSubFontFamily}`
+               , `${ruleFontFamilyFont}-${ruleSubFontFamily}`
+               ])
+             , ...ruleFontFamilyFonts
+             ]
+           : toArray(ruleFontFamilyFonts)
+    })
+
     const fontFaceRules: string[] = []
     for (const font of allFonts) {
       if (
@@ -60,35 +78,10 @@ export async function convertRuleToCSS(
           , ...await getFontFamilyAliases(font)
           ])
         ) {
-          const localFonts: string[] = await go(async () => {
-            const localFonts = new Set([
-              rule.fontFamily
-            , ...await getFontFamilyAliases(rule.fontFamily)
-            ])
-
-            if (rule.subFontFamilyEnabled) {
-              const subFontFamily = rule.subFontFamily.trim()
-
-              if (subFontFamily) {
-                return [
-                  ...flatMap(localFonts, localFont => [
-                    `${localFont} ${subFontFamily}`
-                  , `${localFont}-${subFontFamily}`
-                  ])
-                , ...localFonts
-                ]
-              } else {
-                return toArray(localFonts)
-              }
-            } else {
-              return toArray(localFonts)
-            }
-          })
-
           fontFaceRules.push(
             createFontFaceRule(
               fontFamily
-            , localFonts
+            , await getLocalFonts()
             , {
                 ...rule.fontWeightEnabled && { fontWeight: rule.fontWeight }
               , ...rule.unicodeRangeEnabled && { unicodeRange: rule.unicodeRange }
