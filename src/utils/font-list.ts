@@ -32,7 +32,7 @@ function measureTextWidth(font: string, fontSize: number, text: string): number 
   const ctx = getCanvasContext()
 
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-  ctx.font = `${fontSize}px ${font}`
+  ctx.font = `${fontSize}px "${font}"`
 
   return ctx
     .measureText(text)
