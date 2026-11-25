@@ -57,7 +57,7 @@ waitForLaunch().then(async details => {
   launched.resolve()
 })
 
-chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
+chrome.webNavigation.onCommitted.addListener(async ({ tabId, url, frameId }) => {
   const { fontList, config } = await all({
     fontList: getFontList()
   , config: go(async () => {
@@ -83,7 +83,7 @@ chrome.webNavigation.onCommitted.addListener(async ({ tabId, url }) => {
     {
       target: {
         tabId
-      , allFrames: true
+      , frameIds: [frameId]
       }
     , css
     }
