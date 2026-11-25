@@ -96,7 +96,7 @@ export async function convertRuleToCSS(
     }
 
     return dedent`
-      // Rule ID: ${rule.id}
+      /* Rule ID: ${rule.id} */
       ${fontFaceRules.join('\n')}
     `
   }
